@@ -1,0 +1,59 @@
+<%- include('partials/header') -%>
+  <main class="container mx-auto max-w-md">
+    <header>
+      <h1 class="text-6xl text-center pt-8 pb-2">Centsible</h1>
+      <p class="text-center">Taking the stress out of small business accounting.</p>
+      <h1 class="section-title pt-8">Sign-up</h1>
+    </header>
+    <section class="mx-8">
+      <% if (locals.messages.errors) { %> <% messages.errors.forEach( el => { %>
+      <div class="alert alert-error">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span><%= el.msg %></span>
+        </div>
+      </div>
+      <% }) %> <% } %> <% if (locals.messages.info) { %> <%
+      messages.info.forEach( el => { %>
+      <div class="alert alert-info">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span><%= el.msg %></span>
+        </div>
+      </div>
+      <% }) %> <% } %>
+      <form action="/signup" method="POST" class="grid grid-cols-1 gap-y-4">
+        <div class="form-control ">
+            <label for="userName" class="form-label">
+              <span class=label-text>User Name</span>
+            </label>
+            <input type="text" class="input input-bordered" id="userName" name="userName">
+          </div>
+        <div class="form-control">
+          <label for="exampleInputEmail1" class="form-label">
+            <span class=label-text>Email</span>
+          </label>
+          <input type="email" class="input input-bordered" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+          <small id="emailHelp" class="">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-control">
+          <label for="password" class="form-label">
+            <span class=label-text>Password</span>
+          </label>
+          <input type="password" class="input input-bordered" id="password" name="password">
+        </div>
+        <div class="form-control">
+          <label for="confirmPassword" class="form-label">
+            <span class=label-text>Confirm Password</span>
+          </label>
+          <input type="password" class="input input-bordered" id="confirmPassword" name="confirmPassword">
+        </div>
+        <div class="flex gap-4 mt-4 justify-center">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a href="/" class="btn btn-primary btn-outline">Cancel</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+<%- include('partials/footer') -%>

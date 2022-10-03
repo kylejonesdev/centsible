@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    main {
+        min-height: 75vh;
+    }
+    section {
+        @apply mx-1 sm:mx-8 mb-12 mt-4
+    }
+}
+
+@layer components {
+
+    .page-title {
+        @apply text-2xl mx-8 pt-4
+    }
+    .section-title {
+        @apply text-4xl mx-4
+    }
+    .table-title {
+        @apply text-4xl mx-4 mb-8
+    }
+    .btn-primary {
+        @apply text-white text-opacity-100
+    }
+    .table :where(thead, tfoot) :where(th, td) {
+        @apply bg-primary text-base-100
+    }
+}

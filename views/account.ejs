@@ -1,0 +1,113 @@
+<%- include('partials/header') -%>
+  <main class="container mx-auto">
+    <header>
+      <h1 class="page-title">Account Details</h5>
+      <h2 class="section-title"><%= account.name %></h2>
+    </header>
+    <section>
+      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/accounts/<%= account._id %>?_method=PUT" method="POST">
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="date" class="label">
+            <span class="label-text">Date</span>
+          </label>
+          <input id="date" class="input input-bordered" type="date" name="date" value=2022-01-01>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+            <label for="name" class="label">
+              <span class="label-text">Name</span>
+            </label>
+            <input type="text" class="input input-bordered" id="name" name="name" value="<%= account.name %>">
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="number" class="form-label">
+            <span class="label-text">Account #</span>
+          </label>
+          <input type="text" class="input input-bordered" id="number" name="number" value="<%= account.number %>">
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="type" class="form-label">
+            <span class="label-text">Account Type</span>
+          </label>
+          <input type="text" class="input input-bordered" id="type" name="type" value="<%= account.type %>"></input>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="description" class="form-label">
+            <span class="label-text">Description</span>
+          </label>
+          <textarea class="textarea textarea-bordered" id="description" name="description"><%= account.description %></textarea>
+        </div>
+        <div class="col-span-12 my-4 flex justify-center">
+          <button id="update-account" class="btn btn-accent px-4" type="submit">Update Account</button>          
+        </div>
+      </form>
+      <div class="flex justify-center">
+        <input class="btn btn-secondary btn-outline" name="action" onclick="history.back()" type="submit" value="Back"/>
+      </div>
+    </section>
+    <header>
+      <h2 class="page-title"><%= account.name %></h5>
+      <h3 class="table-title">Transactions</h2>
+    </header>
+    <section class="overflow-x-auto">
+      <table class="table table-compact w-full">
+        <thead>
+          <tr>
+            <th scope="col">
+              <a class="link" href="/accounts/<%= account._id %>/sort/date">Date</a>                  
+            </th>
+            <th scope="col">
+              <a class="link" href="/accounts/<%= account._id %>/sort/payor">Payor</a>
+            </th>
+            <th scope="col">
+              <a class="link" href="/accounts/<%= account._id %>/sort/payee">Payee</a>
+            </th>
+            <th scope="col">Account</th>
+            <th scope="col">
+              <a class="link" href="/accounts/<%= account._id %>/sort/amount">Amount</a>
+            </th>
+            <th scope="col">Info/Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < transactions.length; i++) { %>          
+            <tr>
+              <td><%= transactions[i].date %></td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payor._id %>">
+                  <%= transactions[i].payor.name %>
+                </a>
+              </td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payee._id %>">
+                  <%= transactions[i].payee.name %>
+                </a>
+              </td>
+              <td>
+                <a class="link" href="/accounts/<%= transactions[i].account._id %>">
+                  <%= transactions[i].account.name %>
+                </a>
+              </td>        
+              <td>$<%= transactions[i].amount %></td>          
+              <td class="flex gap-x-2">
+                <a class="btn btn-primary btn-xs fa-solid fa-ellipsis" href="/transactions/<%= transactions[i]._id %>"><span class="sr-only">Details</span></a>
+                <form action="/transactions/delete/<%= transactions[i].id %>?_method=DELETE" method="POST" class="col-3">
+                  <button class="btn btn-error btn-xs fa fa-trash" type="submit"><span class="sr-only">Delete</span></button>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total</td>
+            <td>$<%= total %></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>        
+    </section>
+  </main>  
+<%- include('partials/footer') -%>

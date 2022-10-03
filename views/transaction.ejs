@@ -1,0 +1,149 @@
+<%- include('partials/header') -%>
+  <main class="container mx-auto">
+    <header>
+      <h1 class="page-title">Transaction Details</h2>
+      <h2 class="section-title">Single Transaction</h2>
+      <small class="mx-8">Transaction ID: <%= transaction.id %></small>   
+    </header>
+    <section class="m-8">
+
+      <table class="table table-compact w-full">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Payor</th>
+            <th scope="col">Payee</th>
+            <th scope="col">Account</th>
+            <th scope="col">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= transaction.date %></td>
+            <td>
+              <a class="link" href="/entities/<%= transaction.payor._id %>">
+                <%= transaction.payor.name %>
+              </a>
+            </td>
+            <td>
+              <a class="link" href="/entities/<%= transaction.payee._id %>">
+                <%= transaction.payee.name %>
+              </a>
+            </td>
+            <td>
+              <a class="link" href="/accounts/<%= transaction.account._id %>">
+                <%= transaction.account.name %>
+              </a>
+            </td>        
+            <td>$<%= transaction.amount %></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <!-- <div class="col-12 col-md-6 mt-3">
+      <h5>Description</h5>
+      <div class="border border-slate-300 rounded">
+        <p class="m-2"><%= transaction.description %></p>
+      </div>
+    </div> -->
+    <header>
+      <h2 class="section-title">Update Transaction</h2>
+    </header>
+    <section>
+      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/update/<%= transaction._id %>?_method=PUT" enctype="multipart/form-data" method="POST">
+          <div class="form-control col-span-12 md:col-span-6">
+            <label for="payor" class="label">
+              <span class="label-text">Payor</span>
+            </label>
+            <div class="input-group">
+              <select class="select select-bordered w-5/6 md:w-2/3" id="payor" name="payor">
+                <option value="<%= transaction.payor._id %>"><%= transaction.payor.name %></option>
+                <% for(let i = 0; i < entities.length; i++) {
+                  if(entities[i].name !== transaction.payor.name) { %>
+                    <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+                  <% } %>
+                <% } %>
+              </select>
+              <a class="btn btn-primary w-1/6 md:w-1/3" href="/entities" class="pl-2">Add</a>
+            </div>
+          </div>
+          <div class="form-control col-span-12 md:col-span-6">
+            <label for="payee" class="label">
+              <span class="label-text">Payee</span>
+            </label>
+            <div class="input-group">
+              <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
+                <option value="<%= transaction.payee._id %>"><%= transaction.payee.name %></option>
+                <% for(let i = 0; i < entities.length; i++) {
+                  if(entities[i].name !== transaction.payee.name) { %> 
+                    <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+                  <% } %>
+                <% } %>
+              </select>
+              <a class="btn btn-primary w-1/6 md:w-1/3" href="/entities" class="pl-2">Add</a>
+            </div>
+          </div>
+          <div class="form-control col-span-12 md:col-span-6">
+            <label for="account" class="label">
+              <span class="label-text">Account</span>
+            </label>
+            <div class="input-group">
+              <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
+                <option value="<%= transaction.account._id %>"><%= transaction.account.name %></option>
+                <% for(let i = 0; i < accounts.length; i++) { 
+                  if(accounts[i].name !== transaction.account.name) { %>                
+                    <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
+                  <% } %>
+                <% } %>
+              </select>
+              <a class="btn btn-primary w-1/6 md:w-1/3" href="/accounts" class="pl-2">Add</a>
+            </div>
+          </div>
+          <div class="form-control col-span-6 md:col-span-3">
+            <label for="date" class="label">
+              <span class="label-text">Date</span>
+            </label>
+            <input id="date" class="input input-bordered" type="date" name="date" value="<%= transaction.date %>">
+          </div>
+          <div class="form-control col-span-6 md:col-span-3">
+            <label for="amount" class="label">
+              <span class="label-text">Amount</span>
+            </label>
+            <div class="input-group grid grid-cols-4">
+              <span class="justify-center font-semibold bg-primary text-base-100">$</span>
+              <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.amount %>">
+            </div>
+          </div>
+          <div class="form-control col-span-12 sm:col-span-6 sm:row-span-2">
+            <label for="description" class="label">
+              <span class="label-text">Description</span>
+            </label>
+            <textarea class="textarea textarea-bordered" id="description" name="description" rows="4"><%= transaction.description %></textarea>
+          </div>
+          <div class="col-span-12 sm:col-span-6">
+            <label class="label">
+              <span class="label-text">Documentation</span>
+            </label>
+            <div class="border rounded-lg w-full">
+              <a href="<%= transaction.imageURL %>">
+                <img class="border rounded-lg max-w-sm mx-auto" src="<%= transaction.imageURL %>">
+              </a>
+            </div>
+          </div>
+          <div class="form-control col-span-12 sm:col-span-6">  
+            <label for="imgUpload" class="label">
+              <span class="label-text">Update Documentation</span>
+            </label>
+            <input type="file" class="input input-bordered file:btn file:btn-primary file:h-full file:hover:bg-primary-focus file:mr-4 file:-ml-4 file:px-4 file:rounded-r-none" id="imageUpload" name="file">
+          </div>
+          <div class="col-span-12 flex justify-center my-4">
+            <button id="update-transaction" class="btn btn-accent" type="submit">Update Transaction</button>            
+          </div>
+        </div>
+      </form>
+      <div class="flex justify-center">
+        <input class="btn btn-outline btn-secondary" name="action" onclick="history.back()" type="submit" value="Back"/>
+      </div>
+    </section>
+  </main>  
+<%- include('partials/footer') -%>

@@ -1,0 +1,117 @@
+<%- include('partials/header') -%>
+  <main class="container mx-auto">
+    <header>
+      <h1 class="page-title">Entities</h1>
+      <h2 class="section-title">Add an Entity</h2>
+    </header>
+    <section>
+      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/entities/add" method="POST">
+        <div class="form-control col-span-12 lg:col-span-6">
+          <label for="name" class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input type="text" class="input input-bordered" id="name" name="name">
+        </div>
+        <div class="form-control col-span-12 lg:col-span-6">
+          <label for="street" class="label">
+            <span class="label-text">Street</span>
+          </label>
+          <input type="text" class="input input-bordered" id="street" name="street">
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="city" class="label">
+            <span class="label-text">City</span>
+          </label>
+          <input type="text" class="input input-bordered" id="city" name="city"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="state" class="label">
+            <span class="label-text">State</span>
+          </label>
+          <input type="text" class="input input-bordered" id="state" name="state"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="zip" class="label">
+            <span class="label-text">Zip</span>
+          </label>
+          <input type="text" class="input input-bordered" id="zip" name="zip"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="country" class="label">
+            <span class="label-text">Country</span>
+          </label>
+          <input type="text" class="input input-bordered" id="country" name="country"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="phone" class="label">
+            <span class="label-text">Phone</span>
+          </label>
+          <input type="text" class="input input-bordered" id="phone" name="phone"></input>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="email" class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="text" class="input input-bordered" id="email" name="email"></input>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="notes" class="label">
+            <span class="label-text">Notes</span>
+          </label>
+          <textarea class="textarea textarea-bordered" id="notes" name="notes"></textarea>
+        </div>
+        <div class="col-span-12 flex justify-center">
+          <button id="add-transaction" class="btn btn-accent mt-4" type="submit">Add Entity</button>
+        </div>
+      </form>
+    </section>
+    <header>
+      <h2 class="table-title">All Entities</h2>
+    </header>
+    <section class="overflow-x-auto">
+      <% if (locals.messages.errors) { %> 
+        <% messages.errors.forEach( el => { %>
+      <div class="alert alert-error my-2">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span><%= el.msg %></span>
+        </div>
+      </div>
+        <% }) %>
+      <% } %>
+      <table class="table table-compact w-full">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Info/Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < entities.length; i++) { %>          
+            <tr>
+              <td>
+                <a class="link" href="/entities/<%= entities[i]._id %>">
+                  <%= entities[i].name %>
+                </a>
+              </td>
+              <td><%= entities[i].phone %></td>
+              <td><%= entities[i].email %></td>           
+              <td class="flex gap-x-2">
+                <a class="btn btn-primary btn-xs fa fa-ellipsis" href="/entities/<%= entities[i]._id %>"><span class="sr-only">Details</span></a>
+                <form
+                action="/entities/<%= entities[i]._id %>?_method=DELETE"
+                method="POST"
+                class="col-3"
+                >
+                  <button class="btn btn-error btn-xs fa fa-trash" type="submit"><span class="sr-only">Delete</span></button>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+  </main>  
+<%- include('partials/footer') -%>

@@ -1,0 +1,143 @@
+<%- include('partials/header') -%>
+  <main class="container mx-auto">
+    <header>      
+      <h1 class="page-title">Entity Details</h1>
+      <h2 class="section-title"><%= entity.name %></h2>
+    </header>
+    <section>      
+      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/entities/<%= entity._id %>?_method=PUT" method="POST">
+        <div class="form-control col-span-12 lg:col-span-6">
+          <label for="name" class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input type="text" class="input input-bordered" id="name" name="name" value="<%= entity.name %>">
+        </div>
+        <div class="form-control col-span-12 lg:col-span-6">
+          <label for="street" class="label">
+            <span class="label-text">Street</span>
+          </label>
+          <input type="text" class="input input-bordered" id="street" name="street" value="<%= entity.street %>">
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="city" class="label">
+            <span class="label-text">City</span>
+          </label>
+          <input type="text" class="input input-bordered" id="city" name="city" value="<%= entity.city %>"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="state" class="label">
+            <span class="label-text">State</span>
+          </label>
+          <input type="text" class="input input-bordered" id="state" name="state" value="<%= entity.state %>"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="zip" class="label">
+            <span class="label-text">Zip</span>
+          </label>
+          <input type="text" class="input input-bordered" id="zip" name="zip" value="<%= entity.zip %>"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="country" class="label">
+            <span class="label-text">Country</span>
+          </label>
+          <input type="text" class="input input-bordered" id="country" name="country" value="<%= entity.country %>"></input>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="phone" class="label">
+            <span class="label-text">Phone</span>
+          </label>
+          <input type="text" class="input input-bordered" id="phone" name="phone" value="<%= entity.phone %>"></input>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="email" class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="text" class="input input-bordered" id="email" name="email" value="<%= entity.email %>"></input>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="notes" class="label">
+            <span class="label-text">Notes</span>
+          </label>
+          <textarea class="textarea textarea-bordered" id="notes" name="notes"> <%= entity.notes %></textarea>
+        </div>
+        <div class="col-span-12 flex justify-center">
+          <button id="add-transaction" class="btn btn-accent m-4" type="submit">Update Entity</button>
+        </div>
+      </form>
+      <div class="flex justify-center">
+        <input class="btn btn-secondary btn-outline" name="action" onclick="history.back()" type="submit" value="Back"/>
+      </div>
+    </section>
+    <header>
+      <h2 class="page-title"><%= entity.name %></h5>
+      <h3 class="table-title">Transactions</h2>
+    </header>
+    <section class="overflow-x-auto">
+      <table class="table table-compact w-full">
+        <thead>
+          <tr>
+            <th scope="col">
+              <a class="link" href="/entities/<%= entity._id %>/sort/date">Date</a>                  
+            </th>
+            <th scope="col">
+              <a class="link" href="/entities/<%= entity._id %>/sort/payor">Payor</a>
+            </th>
+            <th scope="col">
+              <a class="link" href="/entities/<%= entity._id %>/sort/payee">Payee</a>
+            </th>
+            <th scope="col" class="hidden sm:table-cell">
+              <a class="link" href="/entities/<%= entity._id %>/sort/account">Account</a>
+            </th>
+            <th scope="col" class="hidden sm:table-cell">
+              <a class="link" href="/entities/<%= entity._id %>/sort/amount">Amount</a>
+            </th>
+            <th scope="col" class="sm:hidden">
+              <a class="link" href="/entities/<%= entity._id %>/sort/amount">Amt</a>
+            </th>
+            <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
+            <th scope="col" class="sm:hidden">Extra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < transactions.length; i++) { %>          
+            <tr>
+              <td><%= transactions[i].date %></td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payor._id %>">
+                  <%= transactions[i].payor.name %>
+                </a>
+              </td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payee._id %>">
+                  <%= transactions[i].payee.name %>
+                </a>
+              </td>
+              <td class="hidden sm:table-cell">
+                <a class="link" href="/accounts/<%= transactions[i].account._id %>">
+                  <%= transactions[i].account.name %>
+                </a>
+              </td>        
+              <td>$<%= transactions[i].amount %></td>          
+              <td class="flex gap-x-2">
+                <a class="btn btn-primary btn-xs fa-solid fa-ellipsis" href="/transactions/<%= transactions[i]._id %>"><span class="sr-only">Details</span></a>
+                <form action="/transactions/delete/<%= transactions[i].id %>?_method=DELETE" method="POST" class="col-3">
+                  <button class="btn btn-error btn-xs fa fa-trash" type="submit"><span class="sr-only">Delete</span></button>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="hidden sm:table-cell"></td>
+            <td>Total</td>
+            <td>$<%= total %></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>        
+    </section>
+  </main>  
+<%- include('partials/footer') -%>
