@@ -69,6 +69,13 @@
           </tr>
         </thead>
         <tbody>
+          <% if(!transactions.length) { %>
+            <tr>
+              <td colspan="6">
+                <p class="text-center">No transactions found.</p>
+              </td>
+            </tr>
+          <% } %>
           <% for(var i=0; i < transactions.length; i++) { %>          
             <tr>
               <td><%= transactions[i].date %></td>

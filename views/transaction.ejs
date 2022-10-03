@@ -40,12 +40,6 @@
         </tbody>
       </table>
     </section>
-    <!-- <div class="col-12 col-md-6 mt-3">
-      <h5>Description</h5>
-      <div class="border border-slate-300 rounded">
-        <p class="m-2"><%= transaction.description %></p>
-      </div>
-    </div> -->
     <header>
       <h2 class="section-title">Update Transaction</h2>
     </header>
@@ -125,9 +119,15 @@
               <span class="label-text">Documentation</span>
             </label>
             <div class="border rounded-lg w-full">
+              <% if(!transaction.imageURL) { %>
+                <div class="bg-base-200 flex justify-center items-center h-32">
+                  <p>Empty</p>
+                </div>
+              <% } else { %>
               <a href="<%= transaction.imageURL %>">
                 <img class="border rounded-lg max-w-sm mx-auto" src="<%= transaction.imageURL %>">
               </a>
+              <% } %>
             </div>
           </div>
           <div class="form-control col-span-12 sm:col-span-6">  
