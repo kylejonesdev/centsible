@@ -2350,6 +2350,10 @@ section {
   height: 2rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
 .w-full {
   width: 100%;
 }
@@ -2680,6 +2684,10 @@ section {
 
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .text-6xl {
