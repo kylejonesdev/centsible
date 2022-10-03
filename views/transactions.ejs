@@ -1,0 +1,173 @@
+<%- include('partials/header') -%> 
+  <main class="sm:container mx-auto">
+    <header>
+      <h1 class="page-title">Transactions</h1>
+      <h2 class="section-title">Add a Transaction</h2>
+    </header>
+    <section>
+      <% if(locals.messages.errors){ %>
+        <% messages.errors.forEach(item => { %>
+          <div class="alert alert-error my-2">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span><%= item.msg %></span>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/add" enctype="multipart/form-data" method="POST">
+        <div class="form-control col-span-12 md:col-span-4">
+          <label for="payor" class="label">
+            <span class="label-text">Payor</span>
+          </label>
+          <div class="input-group">
+            <select class="select select-bordered w-5/6 md:w-2/3" id="payor" name="payor">
+              <option disabled selected value="">Select</option>
+              <% for(let i = 0; i < entities.length; i++) { %>
+                <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+              <% } %>
+            </select>
+            <a href="/entities" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
+          </div>
+        </div>
+        <div class="form-control col-span-12 md:col-span-4">
+          <label for="payee" class="label">
+            <span class="label-text">Payee</span>
+          </label>
+          <div class="input-group">
+            <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
+              <option disabled selected value="">Select</option>
+              <% for(let i = 0; i < entities.length; i++) { %>
+                <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+              <% } %>
+            </select>
+            <a href="/entities" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
+          </div>
+        </div>
+        <div class="form-control col-span-12 md:col-span-4">
+          <label for="account" class="label">
+            <span class="label-text">Account</span>
+          </label>
+          <div class="input-group">
+            <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
+              <option disabled selected value="">Select</option>
+              <% for(let i = 0; i < accounts.length; i++) { %>
+                <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
+              <% } %>
+            </select>
+            <a href="/accounts" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
+          </div>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="date" class="label">
+            <span class="label-text">Date</span>
+          </label>
+          <input id="date" class="input input-bordered" type="date" name="date" value=2022-01-01>
+        </div>
+        <div class="form-control col-span-6">
+          <label for="amount" class="label">
+            <span class="label-text">Amount</span>
+          </label>
+          <div class="input-group grid grid-cols-5">
+            <span class="justify-center font-semibold bg-primary text-base-100">$</span>
+            <input id="amount" class="input input-bordered col-span-4" type="number" value="0.00" name="amount">
+          </div>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="description" class="label">
+            <span class="label-text">Description</span>
+          </label>
+          <textarea class="textarea textarea-bordered" id="description" name="description"></textarea>
+        </div>
+        <div class="form-control col-span-12 sm:col-span-6">
+          <label for="imgUpload" class="label">
+            <span class="label-text">Documentation</span>
+          </label>
+          <input id="imgUpload" type="file" class="input input-bordered file:btn file:btn-primary file:h-full file:hover:bg-primary-focus file:mr-4 file:-ml-4 file:px-4 file:rounded-r-none" name="file">              
+        </div>
+        <div class="col-span-12 justify-self-center mt-8">
+          <button id="add-transaction" class="btn btn-accent" type="submit">Add Transaction</button>
+        </div>
+      </form>
+    </section>
+    <header>
+      <h2 class="table-title">All Transactions</h2>
+    </header>
+    <section class="overflow-x-auto">
+      <table class="table table-compact w-full">
+        <thead>
+            <tr>
+                <th scope="col">
+                  <a class="link" href="/transactions/sort/date">Date</a>                  
+                </th>
+                <th scope="col">
+                  <a class="link" href="/transactions/sort/payor">Payor</a>
+                </th>
+                <th scope="col">
+                  <a class="link" href="/transactions/sort/payee">Payee</a>
+                </th>
+                <th scope="col" class="hidden sm:table-cell">
+                  <a class="link" href="/transactions/sort/account">Account</a>
+                </th>
+                <th scope="col" class="hidden sm:table-cell">
+                  <a class="link" href="/transactions/sort/amount">Amount</a>
+                </th>
+                <th scope="col" class="sm:hidden">
+                  <a class="link" href="/transactions/sort/amount">Amt</a>
+                </th>
+                <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
+                <th scope="col" class="sm:hidden">Extra</th>
+            </tr>
+        </thead>
+        <tbody>
+          <% if(!transactions.length) { %>
+            <tr>
+              <td colspan="6">
+                <p class="text-center">No transactions found.</p>
+              </td>
+            </tr>
+          <% } %>
+          <% for(var i=0; i < transactions.length; i++) { %>          
+            <tr>
+              <td><%= transactions[i].date %></td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payor._id %>">
+                  <%= transactions[i].payor.name %>
+                </a>
+              </td>
+              <td>
+                <a class="link" href="/entities/<%= transactions[i].payee._id %>">
+                  <%= transactions[i].payee.name %>
+                </a>
+              </td>
+              <td class="hidden sm:table-cell">
+                <a class="link" href="/accounts/<%= transactions[i].account._id %>">
+                  <%= transactions[i].account.name %>
+                </a>
+              </td>        
+              <td>$<%= transactions[i].amount %></td>          
+              <td class="flex gap-x-2">
+                <a href="/transactions/<%= transactions[i]._id %>">
+                  <button class="btn btn-primary btn-xs fa-solid fa-ellipsis" value="transaction-details"><span class=sr-only>Details</span></button>
+                </a>
+                <form action="/transactions/delete/<%= transactions[i].id %>?_method=DELETE" method="POST">
+                  <button class="btn btn-error btn-xs fa fa-trash" type="submit" value="delete-transaction"><span class=sr-only>Delete</span></button>
+                </form>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td class="hidden sm:table-cell"></td>
+            <td>Total</td>
+            <td>$<%= total %></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>        
+    </section>
+  </main>  
+<%- include('partials/footer') -%>
