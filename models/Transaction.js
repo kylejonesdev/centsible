@@ -21,7 +21,7 @@ const TransactionSchema = mongoose.Schema( {
         ref: 'Entity'
     },
     date: {
-        type: String,
+        type: Date,
         required: true
     },
     account: {

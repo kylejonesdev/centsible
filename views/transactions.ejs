@@ -91,6 +91,26 @@
       </form>
     </section>
     <header>
+      <h2 class="section-title">Filters</h2>
+    </header>
+    <section>
+      <form action="/transactions/filter" method="POST">
+        <div class="form-control">
+          <label for="dateRangeStart" class="label">
+            <span class="label-text">Start Date</span>
+          </label>
+          <input id="dateRangeStart" type="date" class="input input-bordered" name="dateRangeStart">
+        </div>
+        <div class="form-control">
+          <label for="dateRangeEnd" class="label">
+            <span class="label-text">End Date</span>
+          </label>
+          <input id="dateRangeEnd" type="date" class="input input-bordered" name="dateRangeEnd">
+        </div>
+        <button id="apply-filters" class="btn btn-accent" type="submit">Apply Filters</button>
+      </form>
+    </section>
+    <header>
       <h2 class="table-title">All Transactions</h2>
     </header>
     <section class="overflow-x-auto">
