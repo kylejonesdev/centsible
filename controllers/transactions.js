@@ -1,4 +1,5 @@
 const cloudinary = require("../middleware/cloudinary");
+const mongoose = require("mongoose");
 const Transaction = require("../models/Transaction");
 const Entity = require("../models/Entity")
 const Account = require("../models/Account")
@@ -6,82 +7,116 @@ const Account = require("../models/Account")
 module.exports = {
   getTransactions: async (req, res) => {
     //Sort Order
-    let sortOrder = req.params.sortOrder;
-    switch(sortOrder) {
-        case 'date':
-            sortOrder = { date: 1 }
-            break;
-        case 'payor':
-            sortOrder = { payor: 1 }
-            break;
-        case 'payee':
-            sortOrder = { payee: 1 }
-            break;
-        case 'account':
-            sortOrder = { account: 1 }
-            break;
-        case 'amount':
-            sortOrder = { amount: -1 }
-            break;
-        default:
-            sortOrder = { date: -1 }
+    // let sortOrder = req.params.sortOrder;
+    // switch(sortOrder) {
+    //     case 'date':
+    //         sortOrder = { date: 1 }
+    //         break;
+    //     case 'payor':
+    //         sortOrder = { payor: 1 }
+    //         break;
+    //     case 'payee':
+    //         sortOrder = { payee: 1 }
+    //         break;
+    //     case 'account':
+    //         sortOrder = { account: 1 }
+    //         break;
+    //     case 'amount':
+    //         sortOrder = { amount: -1 }
+    //         break;
+    //     default:
+    //         sortOrder = { date: -1 }
+    // }
+    //Initialize all filters to default values
+    let filterSortByAndDirection = { date: -1 };    
+    let filterDateRangeStart = 0
+    let filterDateRangeEnd =  Date.now();
+
+    //Get filter values from client if they are provided
+    if(req.body.filterDateRangeStart) {
+      filterDateRangeStart = req.body.filterDateRangeStart
     }
-    //Initialize date range values to include all dates
-    let dateRangeStart = 0
-    let dateRangeEnd =  Date.now();
-    //Get date ranges from client
-    if(req.body.dateRangeStart) {
-      dateRangeStart = req.body.dateRangeStart
+    if(req.body.filterDateRangeEnd) {
+      filterDateRangeEnd = req.body.filterDateRangeEnd
     }
-    if(req.body.dateRangeEnd) {
-      dateRangeEnd = req.body.dateRangeEnd
+    if(req.body.filterSortBy || req.body.filterSortDirection) {
+      filterSortByAndDirection = { [req.body.filterSortBy]: +req.body.filterSortDirection };
     }
-    console.log(dateRangeStart);
-    console.log(dateRangeEnd);
+    console.log(`Date range start: ${filterDateRangeStart}`);
+    console.log(`Date range end: ${filterDateRangeEnd}`);
     try {
       const transactions = await Transaction
-      .find(            
+      .aggregate([
         {
-          $and: [
-            {
-              user: req.user.id 
-            },
-            {
-              date: {
-                $gte: dateRangeStart
+          $match: { //find the following with all conditions true
+            $and: [
+              {
+                user: new mongoose.Types.ObjectId(req.user.id)
+              },
+              {
+                date: {
+                  $gte: new Date(filterDateRangeStart)
+                }
+              },
+              {
+                date: {
+                  $lte: new Date(filterDateRangeEnd)
+                }
+              }
+            ]
+          } 
+        },
+        {
+          $lookup: { //join entities collection to payor id to get the payor name
+            from: "entities",
+            localField: "payor",
+            foreignField: "_id",
+            as: "payor"
+          }
+        },
+        {
+          $unwind: "$payor" //remove the joined object from the returned array
+        },
+        {
+          $lookup: { //join entities collection to payee id to get the payee name
+            from: "entities",
+            localField: "payee",
+            foreignField: "_id",
+            as: "payee"
+          }
+        },
+        {
+          $unwind: "$payee" //remove the joined object from the returned array
+        },
+        {
+          $lookup: { //join the accounts collection to account to get the account name
+            from: "accounts",
+            localField: "account",
+            foreignField: "_id",
+            as: "account"
+          }
+        },
+        {
+          $unwind: "$account" //remove the joined object from the returned array
+        },
+        {
+          $project: { //return only the following fields named as shown and their values as formatted
+            date: {
+              $dateToString: {
+                date: "$date",
+                format: "%Y-%m-%d"
               }
             },
-            {
-              date: {
-                $lte: dateRangeEnd
-              }
-            }
-          ]
+            payor: "$payor.name",
+            payee: "$payee.name",
+            account: "$account.name",
+            amount: "$amount"
+          }
         },
-        //Fields to return
         {
-            date: 1,
-            account: 1,
-            amount: 1
+          $sort: filterSortByAndDirection //sort the query results by the order submitted in the filters form
         }
-      )
-      .sort(
-        sortOrder
-      )
-      .populate([
-        {
-            path: 'payor',
-            select: 'name'
-        },
-        {
-            path: 'payee',
-            select: 'name'
-        },
-        {
-            path: 'account',
-            select: 'name'
-        }
-      ]);
+      ])
       const createExampleEntities = async (req, res) => {
         await Entity.insertMany([
             {

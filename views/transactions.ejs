@@ -94,21 +94,59 @@
       <h2 class="section-title">Filters</h2>
     </header>
     <section>
-      <form action="/transactions/filter" method="POST">
-        <div class="form-control">
-          <label for="dateRangeStart" class="label">
+      <form action="/transactions/filter" method="POST"> <!-- Filter form -->
+        <div class="form-control"> <!-- Filter by date -->
+          <label for="filterDateRangeStart" class="label">
             <span class="label-text">Start Date</span>
           </label>
-          <input id="dateRangeStart" type="date" class="input input-bordered" name="dateRangeStart">
+          <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
         </div>
         <div class="form-control">
-          <label for="dateRangeEnd" class="label">
+          <label for="filterDateRangeEnd" class="label">
             <span class="label-text">End Date</span>
           </label>
-          <input id="dateRangeEnd" type="date" class="input input-bordered" name="dateRangeEnd">
+          <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
         </div>
-        <button id="apply-filters" class="btn btn-accent" type="submit">Apply Filters</button>
-      </form>
+        <div> <!-- Sort by field -->
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Date</span> 
+              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="date" checked />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Payor</span> 
+              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="payor" />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Payee</span> 
+              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="payee" />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Account</span> 
+              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="account" />
+            </label>
+          </div>
+          <div class="form-control"> <!-- Sort direction -->
+            <label class="label cursor-pointer">
+              <span class="label-text">Ascending</span> 
+              <input type="radio" class="radio checked:bg-primary" name="filterSortDirection" value="1" />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Descending</span> 
+              <input type="radio" class="radio checked:bg-primary" name="filterSortDirection" value="-1" checked />
+            </label>
+          </div>
+          <button id="apply-filters" class="btn btn-accent" type="submit">Apply Filters</button>
+        </div> 
+      </form> <!-- End filter form-->
     </section>
     <header>
       <h2 class="table-title">All Transactions</h2>
@@ -117,24 +155,12 @@
       <table class="table table-compact w-full">
         <thead>
             <tr>
-                <th scope="col">
-                  <a class="link" href="/transactions/sort/date">Date</a>                  
-                </th>
-                <th scope="col">
-                  <a class="link" href="/transactions/sort/payor">Payor</a>
-                </th>
-                <th scope="col">
-                  <a class="link" href="/transactions/sort/payee">Payee</a>
-                </th>
-                <th scope="col" class="hidden sm:table-cell">
-                  <a class="link" href="/transactions/sort/account">Account</a>
-                </th>
-                <th scope="col" class="hidden sm:table-cell">
-                  <a class="link" href="/transactions/sort/amount">Amount</a>
-                </th>
-                <th scope="col" class="sm:hidden">
-                  <a class="link" href="/transactions/sort/amount">Amt</a>
-                </th>
+                <th scope="col">Date</th>
+                <th scope="col">Payor</th>
+                <th scope="col">Payee</th>
+                <th scope="col" class="hidden sm:table-cell">Account</th>
+                <th scope="col" class="hidden sm:table-cell">Amount</th>
+                <th scope="col" class="sm:hidden">Amt</th>
                 <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
                 <th scope="col" class="sm:hidden">Extra</th>
             </tr>
@@ -152,17 +178,17 @@
               <td><%= transactions[i].date %></td>
               <td>
                 <a class="link" href="/entities/<%= transactions[i].payor._id %>">
-                  <%= transactions[i].payor.name %>
+                  <%= transactions[i].payor %>
                 </a>
               </td>
               <td>
                 <a class="link" href="/entities/<%= transactions[i].payee._id %>">
-                  <%= transactions[i].payee.name %>
+                  <%= transactions[i].payee %>
                 </a>
               </td>
               <td class="hidden sm:table-cell">
                 <a class="link" href="/accounts/<%= transactions[i].account._id %>">
-                  <%= transactions[i].account.name %>
+                  <%= transactions[i].account %>
                 </a>
               </td>        
               <td>$<%= transactions[i].amount %></td>          
