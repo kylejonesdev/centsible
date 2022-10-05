@@ -6,31 +6,10 @@ const Account = require("../models/Account")
 
 module.exports = {
   getTransactions: async (req, res) => {
-    //Sort Order
-    // let sortOrder = req.params.sortOrder;
-    // switch(sortOrder) {
-    //     case 'date':
-    //         sortOrder = { date: 1 }
-    //         break;
-    //     case 'payor':
-    //         sortOrder = { payor: 1 }
-    //         break;
-    //     case 'payee':
-    //         sortOrder = { payee: 1 }
-    //         break;
-    //     case 'account':
-    //         sortOrder = { account: 1 }
-    //         break;
-    //     case 'amount':
-    //         sortOrder = { amount: -1 }
-    //         break;
-    //     default:
-    //         sortOrder = { date: -1 }
-    // }
-    //Initialize all filters to default values
-    let filterSortByAndDirection = { date: -1 };    
+    //Initialize all filters and sorts to default values
     let filterDateRangeStart = 0
     let filterDateRangeEnd =  Date.now();
+    let filterSortByAndDirection = { date: -1 };    
 
     //Get filter values from client if they are provided
     if(req.body.filterDateRangeStart) {
@@ -42,8 +21,6 @@ module.exports = {
     if(req.body.filterSortBy || req.body.filterSortDirection) {
       filterSortByAndDirection = { [req.body.filterSortBy]: +req.body.filterSortDirection };
     }
-    console.log(`Date range start: ${filterDateRangeStart}`);
-    console.log(`Date range end: ${filterDateRangeEnd}`);
     try {
       const transactions = await Transaction
       .aggregate([
@@ -202,7 +179,6 @@ module.exports = {
         console.log("Creating example accounts.");
         createExampleAccounts(req);
       }
-// @TODO Adjust above to include entity ID but leave behind unnecessary entity info (addres, notes, etc)
       console.log(transactions);
       res.render("transactions.ejs", {transactions: transactions, entities: entities, accounts: accounts, user: req.user, total: total});
     } catch(err) {
@@ -236,7 +212,6 @@ module.exports = {
   },
   createTransaction: async (req, res) => {
     try {
-
       //Error Checking
       const errorMessages = [];
       if(!req.body.payor) {
@@ -291,7 +266,6 @@ module.exports = {
     }
   },
   updateTransaction: async (req, res) => {
-    console.log(req.params.id);
     try {
       if(req.file !== undefined) {
         const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
@@ -334,7 +308,6 @@ module.exports = {
   },
   deleteTransaction: async (req, res) => {
     try {
-      // Find transaction by id
       let transaction = await Transaction.findById({ _id: req.params.id });
       // Delete image from cloudinary
 // @TODO Delete image from cloud not working.

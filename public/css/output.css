@@ -805,6 +805,44 @@ section {
   border-radius: var(--rounded-btn, 0.5rem);
 }
 
+.collapse {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+}
+
+.collapse-title, 
+.collapse > input[type="checkbox"], 
+.collapse-content {
+  grid-column-start: 1;
+  grid-row-start: 1;
+}
+
+.collapse > input[type="checkbox"] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  opacity: 0;
+}
+
+.collapse-content {
+  grid-row-start: 2;
+  overflow: hidden;
+  max-height: 0px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  cursor: unset;
+  transition: padding 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.collapse-open .collapse-content,
+.collapse:focus:not(.collapse-close) .collapse-content,
+.collapse:not(.collapse-close)
+  input[type="checkbox"]:checked
+  ~ .collapse-content {
+  max-height: 9000px;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -1708,6 +1746,92 @@ body[dir="rtl"] .checkbox:checked,
   background-image: linear-gradient(45deg, transparent 65%, hsl(var(--chkbg)) 65.99%), linear-gradient(-45deg, transparent 75%, hsl(var(--chkbg)) 75.99%), linear-gradient(45deg, hsl(var(--chkbg)) 40%, transparent 40.99%), linear-gradient(-45deg, hsl(var(--chkbg)) 30%, hsl(var(--chkfg)) 30.99%, hsl(var(--chkfg)) 40%, transparent 40.99%), linear-gradient(45deg, hsl(var(--chkfg)) 50%, hsl(var(--chkbg)) 50.99%);
 }
 
+.collapse:focus-visible {
+  outline: 2px solid hsl(var(--nf));
+  outline-offset: 2px;
+}
+
+.collapse-arrow .collapse-title:after {
+  position: absolute;
+  display: block;
+  height: 0.5rem;
+  width: 0.5rem;
+  --tw-translate-y: -100%;
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transition-property: all;
+  transition-duration: 150ms;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  top: 50%;
+  right: 1.4rem;
+  content: "";
+  transform-origin: 75% 75%;
+  box-shadow: 2px 2px;
+  pointer-events: none;
+}
+
+.collapse-plus .collapse-title:after {
+  position: absolute;
+  display: block;
+  height: 0.5rem;
+  width: 0.5rem;
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  top: 0.9rem;
+  right: 1.4rem;
+  content: "+";
+  pointer-events: none;
+}
+
+.collapse:not(.collapse-open):not(.collapse-close) input[type="checkbox"], 
+.collapse:not(.collapse-open):not(.collapse-close) .collapse-title {
+  cursor: pointer;
+}
+
+.collapse:focus:not(.collapse-open):not(.collapse-close) .collapse-title {
+  cursor: unset;
+}
+
+.collapse-title {
+  position: relative;
+}
+
+:where(.collapse > input[type="checkbox"]) {
+  z-index: 1;
+}
+
+.collapse-title, 
+:where(.collapse > input[type="checkbox"]) {
+  width: 100%;
+  padding: 1rem;
+  padding-right: 3rem;
+  min-height: 3.75rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.collapse-open :where(.collapse-content), 
+.collapse:focus:not(.collapse-close) :where(.collapse-content), 
+.collapse:not(.collapse-close) :where(input[type="checkbox"]:checked ~ .collapse-content) {
+  padding-bottom: 1rem;
+  transition: padding 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.collapse-open.collapse-arrow .collapse-title:after, 
+.collapse-arrow:focus:not(.collapse-close) .collapse-title:after, 
+.collapse-arrow:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-title:after {
+  --tw-translate-y: -50%;
+  --tw-rotate: 225deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.collapse-open.collapse-plus .collapse-title:after,
+.collapse-plus:focus:not(.collapse-close) .collapse-title:after,
+.collapse-plus:not(.collapse-close) input[type="checkbox"]:checked ~ .collapse-title:after {
+  content: "−";
+}
+
 .drawer-toggle:focus-visible ~ .drawer-content .drawer-button.btn-primary {
   outline: 2px solid hsl(var(--p));
 }
@@ -2403,12 +2527,28 @@ body[dir="rtl"] .checkbox:checked,
   grid-column: span 4 / span 4;
 }
 
+.col-span-10 {
+  grid-column: span 10 / span 10;
+}
+
+.col-span-5 {
+  grid-column: span 5 / span 5;
+}
+
+.col-span-9 {
+  grid-column: span 9 / span 9;
+}
+
 .m-4 {
   margin: 1rem;
 }
 
 .m-8 {
   margin: 2rem;
+}
+
+.m-0 {
+  margin: 0px;
 }
 
 .mx-auto {
@@ -2429,6 +2569,16 @@ body[dir="rtl"] .checkbox:checked,
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
+}
+
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .mt-4 {
@@ -2457,6 +2607,14 @@ body[dir="rtl"] .checkbox:checked,
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mr-6 {
+  margin-right: 1.5rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
 }
 
 .block {
@@ -2527,6 +2685,22 @@ body[dir="rtl"] .checkbox:checked,
   width: 12rem;
 }
 
+.w-12 {
+  width: 3rem;
+}
+
+.w-32 {
+  width: 8rem;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.w-36 {
+  width: 9rem;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
@@ -2545,6 +2719,14 @@ body[dir="rtl"] .checkbox:checked,
 
 .flex-shrink-0 {
   flex-shrink: 0;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.grow-0 {
+  flex-grow: 0;
 }
 
 .origin-top-right {
@@ -2595,8 +2777,24 @@ body[dir="rtl"] .checkbox:checked,
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
 .items-center {
   align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .justify-center {
@@ -2650,6 +2848,10 @@ body[dir="rtl"] .checkbox:checked,
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
 }
 
+.place-self-start {
+  place-self: start;
+}
+
 .self-center {
   align-self: center;
 }
@@ -2676,6 +2878,11 @@ body[dir="rtl"] .checkbox:checked,
 
 .border {
   border-width: 1px;
+}
+
+.border-y-2 {
+  border-top-width: 2px;
+  border-bottom-width: 2px;
 }
 
 .border-t {
@@ -2748,6 +2955,10 @@ body[dir="rtl"] .checkbox:checked,
 
 .p-3 {
   padding: 0.75rem;
+}
+
+.p-0 {
+  padding: 0px;
 }
 
 .px-4 {
@@ -3347,6 +3558,10 @@ body[dir="rtl"] .checkbox:checked,
 
   .sm\:col-span-6 {
     grid-column: span 6 / span 6;
+  }
+
+  .sm\:col-span-3 {
+    grid-column: span 3 / span 3;
   }
 
   .sm\:row-span-2 {

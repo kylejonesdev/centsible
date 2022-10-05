@@ -91,65 +91,87 @@
       </form>
     </section>
     <header>
-      <h2 class="section-title">Filters</h2>
-    </header>
-    <section>
-      <form action="/transactions/filter" method="POST"> <!-- Filter form -->
-        <div class="form-control"> <!-- Filter by date -->
-          <label for="filterDateRangeStart" class="label">
-            <span class="label-text">Start Date</span>
-          </label>
-          <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
+      <h2 class="table-title">Transactions</h2>
+      <div class="collapse mx-8"> <!-- Filters collapsible section -->
+        <input type="checkbox" />
+        <button class="collapse-title btn btn-primary w-36 m-0 p-0">
+          Filter & Sort
+        </button>
+        <div class="collapse-content">          
+          <form action="/transactions/filter" method="POST"> <!-- Filter form -->
+            <div class="grid grid-cols-12 gap-4">
+              <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
+              <div class="col-span-9 flex my-2"> <!-- Filter by date -->
+                <div class="form-control mr-4">
+                  <label for="filterDateRangeStart" class="label">
+                    <span class="label-text">Start Date</span>
+                  </label>
+                  <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
+                </div>
+                <div class="form-control">
+                  <label for="filterDateRangeEnd" class="label">
+                    <span class="label-text">End Date</span>
+                  </label>
+                  <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
+                </div>
+              </div>
+              <div class="col-span-12 grid grid-cols-12 border-y-2">
+                <h3 class="col-span-3 self-center text-xl">Sort By</h3>
+                <div class="col-span-9 flex flex-wrap justify-between my-4"> <!-- Sort by field -->
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Date</span> 
+                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="date" checked />
+                    </label>
+                  </div>
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Payor</span> 
+                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="payor" />
+                    </label>
+                  </div>
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Payee</span> 
+                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="payee" />
+                    </label>
+                  </div>
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Account</span> 
+                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="account" />
+                    </label>
+                  </div>
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Amount</span> 
+                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="amount" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <h3 class="col-span-3 self-center text-xl">Sort Direction</h3>
+              <div class="col-span-9 flex flex-wrap items-start my-2">              
+                <div class="form-control items-start"> <!-- Sort direction -->
+                  <label class="label cursor-pointer">
+                    <span class="label-text">Ascending</span> 
+                    <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="1" />
+                  </label>
+                </div>
+                <div class="form-control items-start">
+                  <label class="label cursor-pointer">
+                    <span class="label-text">Descending</span> 
+                    <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="-1" checked />
+                  </label>
+                </div>              
+              </div>
+            </div>
+            <div class="flex justify-center mt-4">
+              <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
+            </div>      
+          </form> <!-- End filter form-->          
         </div>
-        <div class="form-control">
-          <label for="filterDateRangeEnd" class="label">
-            <span class="label-text">End Date</span>
-          </label>
-          <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
-        </div>
-        <div> <!-- Sort by field -->
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Date</span> 
-              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="date" checked />
-            </label>
-          </div>
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Payor</span> 
-              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="payor" />
-            </label>
-          </div>
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Payee</span> 
-              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="payee" />
-            </label>
-          </div>
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Account</span> 
-              <input type="radio" name="filterSortBy" class="radio checked:bg-primary" value="account" />
-            </label>
-          </div>
-          <div class="form-control"> <!-- Sort direction -->
-            <label class="label cursor-pointer">
-              <span class="label-text">Ascending</span> 
-              <input type="radio" class="radio checked:bg-primary" name="filterSortDirection" value="1" />
-            </label>
-          </div>
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Descending</span> 
-              <input type="radio" class="radio checked:bg-primary" name="filterSortDirection" value="-1" checked />
-            </label>
-          </div>
-          <button id="apply-filters" class="btn btn-accent" type="submit">Apply Filters</button>
-        </div> 
-      </form> <!-- End filter form-->
-    </section>
-    <header>
-      <h2 class="table-title">All Transactions</h2>
+      </div>
     </header>
     <section class="overflow-x-auto">
       <table class="table table-compact w-full">
