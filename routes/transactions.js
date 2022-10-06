@@ -4,8 +4,14 @@ const upload = require("../middleware/multer");
 const transactionsController = require("../controllers/transactions");
 const { ensureAuth, ensureGuest } = require("../middleware/auth");
 
-//Get many transactions
-//router.get("/", ensureAuth, transactionsController.getTransactions);
+//Get all transactions
+router.get("/", ensureAuth, transactionsController.getTransactions);
+
+//Get all transactions sorted
+router.get("/sort/:sortOrder", ensureAuth, transactionsController.getTransactions);
+
+//Get all transactions in date range
+router.post("/filter", ensureAuth, transactionsController.getTransactions);
 
 //Get one transaction
 router.get("/:id", ensureAuth, transactionsController.getTransaction);

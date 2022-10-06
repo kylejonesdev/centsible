@@ -10,7 +10,7 @@ const logger = require("morgan");
 const connectDB = require("./config/database");
 const mainRoutes = require("./routes/main");
 const transactionRoutes = require("./routes/transactions");
-const reportsRoutes = require("./routes/reports");
+const dashboardRoutes = require("./routes/dashboard");
 const entitiesRoutes = require("./routes/entities");
 const accountsRoutes = require("./routes/accounts");
 
@@ -58,8 +58,8 @@ app.use(flash());
 
 //Routes
 app.use("/", mainRoutes);
+app.use("/dashboard", dashboardRoutes);
 app.use("/transactions", transactionRoutes);
-app.use("/reports", reportsRoutes);
 app.use("/entities", entitiesRoutes);
 app.use("/accounts", accountsRoutes);
 
