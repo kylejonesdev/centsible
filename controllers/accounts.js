@@ -1,5 +1,6 @@
 const Account = require('../models/Account');
 const Transaction = require('../models/Transaction');
+const mongoose = require('mongoose');
 
 module.exports = {
     getAccounts: async (req, res) => {
@@ -48,29 +49,63 @@ module.exports = {
             }    
             const account = await Account.findOne({ _id: req.params.id });
             const relevantTransactions = await Transaction
-            .find({
-                $and: [
-                    {user: req.user._id}, 
-                    {account: account}
-                ]
-            })
-            .sort(
-                sortOrder
-            )
-            .populate([
+            .aggregate([
                 {
-                    path: 'payor',
-                    select: 'name'
+                  $match: { //find the following with all conditions true
+                        account: new mongoose.Types.ObjectId(req.params.id)
+                    },
                 },
                 {
-                    path: 'payee',
-                    select: 'name'
+                  $lookup: { //join entities collection to payor id to get the payor name
+                    from: "entities",
+                    localField: "payor",
+                    foreignField: "_id",
+                    as: "payor"
+                  }
                 },
                 {
-                    path: 'account',
-                    select: 'name'
+                  $unwind: "$payor" //remove the joined object from the returned array
                 },
-            ])
+                {
+                  $lookup: { //join entities collection to payee id to get the payee name
+                    from: "entities",
+                    localField: "payee",
+                    foreignField: "_id",
+                    as: "payee"
+                  }
+                },
+                {
+                  $unwind: "$payee" //remove the joined object from the returned array
+                },
+                {
+                  $lookup: { //join the accounts collection to account to get the account name
+                    from: "accounts",
+                    localField: "account",
+                    foreignField: "_id",
+                    as: "account"
+                  }
+                },
+                {
+                  $unwind: "$account" //remove the joined object from the returned array
+                },
+                {
+                  $project: { //return only the following fields named as shown and their values as formatted
+                    date: {
+                      $dateToString: {
+                        date: "$date",
+                        format: "%Y-%m-%d"
+                      }
+                    },
+                    payor: "$payor.name",
+                    payorId: "$payor._id",
+                    payee: "$payee.name",
+                    payeeId: "$payee._id",
+                    account: "$account.name",
+                    accountId: "$account._id",
+                    amount: "$amount"
+                  }
+                },
+            ]);
             const total = relevantTransactions.reduce((acc, item) => acc + item.amount, 0);
             res.render("account.ejs", { account: account, transactions: relevantTransactions, total: total, user: req.user });
         } catch(err) {

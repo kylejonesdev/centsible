@@ -80,18 +80,18 @@
             <tr>
               <td><%= transactions[i].date %></td>
               <td>
-                <a class="link" href="/entities/<%= transactions[i].payor._id %>">
-                  <%= transactions[i].payor.name %>
+                <a class="link" href="/entities/<%= transactions[i].payorId %>">
+                  <%= transactions[i].payor %>
                 </a>
               </td>
               <td>
-                <a class="link" href="/entities/<%= transactions[i].payee._id %>">
-                  <%= transactions[i].payee.name %>
+                <a class="link" href="/entities/<%= transactions[i].payeeId %>">
+                  <%= transactions[i].payee %>
                 </a>
               </td>
               <td>
-                <a class="link" href="/accounts/<%= transactions[i].account._id %>">
-                  <%= transactions[i].account.name %>
+                <a class="link" href="/accounts/<%= transactions[i].accountId %>">
+                  <%= transactions[i].account %>
                 </a>
               </td>        
               <td>$<%= transactions[i].amount %></td>          

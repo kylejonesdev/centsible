@@ -3,10 +3,9 @@
     <header>
       <h1 class="page-title">Transaction Details</h2>
       <h2 class="section-title">Single Transaction</h2>
-      <small class="mx-8">Transaction ID: <%= transaction.id %></small>   
+      <small class="mx-8">Transaction ID: <%= transaction._id %></small>   
     </header>
-    <section class="m-8">
-
+    <section class="m-8 overflow-x-auto">
       <table class="table table-compact w-full">
         <thead>
           <tr>
@@ -21,18 +20,18 @@
           <tr>
             <td><%= transaction.date %></td>
             <td>
-              <a class="link" href="/entities/<%= transaction.payor._id %>">
-                <%= transaction.payor.name %>
+              <a class="link" href="/entities/<%= transaction.payorId %>">
+                <%= transaction.payor %>
               </a>
             </td>
             <td>
-              <a class="link" href="/entities/<%= transaction.payee._id %>">
-                <%= transaction.payee.name %>
+              <a class="link" href="/entities/<%= transaction.payeeId %>">
+                <%= transaction.payee %>
               </a>
             </td>
             <td>
-              <a class="link" href="/accounts/<%= transaction.account._id %>">
-                <%= transaction.account.name %>
+              <a class="link" href="/accounts/<%= transaction.accountId %>">
+                <%= transaction.account %>
               </a>
             </td>        
             <td>$<%= transaction.amount %></td>
@@ -51,9 +50,9 @@
             </label>
             <div class="input-group">
               <select class="select select-bordered w-5/6 md:w-2/3" id="payor" name="payor">
-                <option value="<%= transaction.payor._id %>"><%= transaction.payor.name %></option>
+                <option value="<%= transaction.payorId %>"><%= transaction.payor %></option>
                 <% for(let i = 0; i < entities.length; i++) {
-                  if(entities[i].name !== transaction.payor.name) { %>
+                  if(entities[i].name !== transaction.payor) { %>
                     <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
                   <% } %>
                 <% } %>
@@ -67,9 +66,9 @@
             </label>
             <div class="input-group">
               <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
-                <option value="<%= transaction.payee._id %>"><%= transaction.payee.name %></option>
+                <option value="<%= transaction.payeeId %>"><%= transaction.payee %></option>
                 <% for(let i = 0; i < entities.length; i++) {
-                  if(entities[i].name !== transaction.payee.name) { %> 
+                  if(entities[i].name !== transaction.payee) { %> 
                     <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
                   <% } %>
                 <% } %>
@@ -83,9 +82,9 @@
             </label>
             <div class="input-group">
               <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
-                <option value="<%= transaction.account._id %>"><%= transaction.account.name %></option>
+                <option value="<%= transaction.accountId %>"><%= transaction.account %></option>
                 <% for(let i = 0; i < accounts.length; i++) { 
-                  if(accounts[i].name !== transaction.account.name) { %>                
+                  if(accounts[i].name !== transaction.account) { %>                
                     <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
                   <% } %>
                 <% } %>

@@ -1,5 +1,6 @@
 const Entity = require('../models/Entity');
 const Transaction = require('../models/Transaction');
+const mongoose = require('mongoose');
 
 module.exports = {
     getEntities: async (req, res) => {
@@ -9,6 +10,7 @@ module.exports = {
             .sort({ name: 1 })
             .lean();
             res.render("entities.ejs", { entities: entities, user: req.user });
+            console.log(entities);
         } catch(err) {
             console.error(err);
         }
@@ -34,33 +36,73 @@ module.exports = {
             }
             const entity = await Entity.findOne({ _id: req.params.id });
             const relevantTransactions = await Transaction
-            .find(
+            .aggregate([
                 {
+                  $match: { //find the following with all conditions true
                     $or: [
-                        { payor: req.params.id },
-                        { payee: req.params.id }
+                      {
+                        payor: new mongoose.Types.ObjectId(req.params.id)
+                      },
+                      {
+                        payee: new mongoose.Types.ObjectId(req.params.id)
+                      },
                     ]
-                }
-            )
-            .sort(
-                sortOrder
-            )
-            .populate(
-                [
-                    {
-                        path: "payor",
-                        select: "name"
+                  } 
+                },
+                {
+                  $lookup: { //join entities collection to payor id to get the payor name
+                    from: "entities",
+                    localField: "payor",
+                    foreignField: "_id",
+                    as: "payor"
+                  }
+                },
+                {
+                  $unwind: "$payor" //remove the joined object from the returned array
+                },
+                {
+                  $lookup: { //join entities collection to payee id to get the payee name
+                    from: "entities",
+                    localField: "payee",
+                    foreignField: "_id",
+                    as: "payee"
+                  }
+                },
+                {
+                  $unwind: "$payee" //remove the joined object from the returned array
+                },
+                {
+                  $lookup: { //join the accounts collection to account to get the account name
+                    from: "accounts",
+                    localField: "account",
+                    foreignField: "_id",
+                    as: "account"
+                  }
+                },
+                {
+                  $unwind: "$account" //remove the joined object from the returned array
+                },
+                {
+                  $project: { //return only the following fields named as shown and their values as formatted
+                    date: {
+                      $dateToString: {
+                        date: "$date",
+                        format: "%Y-%m-%d"
+                      }
                     },
-                    {
-                        path: "payee",
-                        select: "name"
-                    },
-                    {
-                        path: "account",
-                        select: "name"
-                    },
-                ]
-            )
+                    payor: "$payor.name",
+                    payorId: "$payor._id",
+                    payee: "$payee.name",
+                    payeeId: "$payee._id",
+                    account: "$account.name",
+                    accountId: "$account._id",
+                    amount: "$amount"
+                  }
+                },
+            ]);
+            console.log(entity);
+            console.log(req.params.id)
+            console.log(relevantTransactions);
             const total = relevantTransactions.reduce((acc, item) => acc + item.amount, 0);
             res.render("entity.ejs", { entity: entity, transactions: relevantTransactions, total: total, user: req.user });
         } catch(err) {
