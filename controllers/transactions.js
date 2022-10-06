@@ -188,24 +188,74 @@ module.exports = {
   getTransaction: async (req, res) => {
     try {
       const transaction = await Transaction
-      .findById(req.params.id)
-      .populate([
+      .aggregate([
         {
-          path: "payor",
-          select: "name"
+          $match: { //find the following with all conditions true
+            $and: [
+              {
+                user: new mongoose.Types.ObjectId(req.user.id)
+              },
+              {
+                _id: new mongoose.Types.ObjectId(req.params.id)
+              },
+            ]
+          } 
         },
         {
-          path: "payee",
-          select: "name"
+          $lookup: { //join entities collection to payor id to get the payor name
+            from: "entities",
+            localField: "payor",
+            foreignField: "_id",
+            as: "payor"
+          }
         },
         {
-          path: "account",
-          select: "name"
-        }
+          $unwind: "$payor" //remove the joined object from the returned array
+        },
+        {
+          $lookup: { //join entities collection to payee id to get the payee name
+            from: "entities",
+            localField: "payee",
+            foreignField: "_id",
+            as: "payee"
+          }
+        },
+        {
+          $unwind: "$payee" //remove the joined object from the returned array
+        },
+        {
+          $lookup: { //join the accounts collection to account to get the account name
+            from: "accounts",
+            localField: "account",
+            foreignField: "_id",
+            as: "account"
+          }
+        },
+        {
+          $unwind: "$account" //remove the joined object from the returned array
+        },
+        {
+          $project: { //return only the following fields named as shown and their values as formatted
+            date: {
+              $dateToString: {
+                date: "$date",
+                format: "%Y-%m-%d"
+              }
+            },
+            payor: "$payor.name",
+            payorId: "$payor._id",
+            payee: "$payee.name",
+            payeeId: "$payee._id",
+            account: "$account.name",
+            accountId: "$account._id",
+            amount: "$amount"
+          }
+        },
       ]);
       const entities = await Entity.find();
       const accounts = await Account.find();
-      res.render("transaction.ejs", { transaction: transaction, entities: entities, accounts: accounts, user: req.user });
+      console.log(transaction[0]);
+      res.render("transaction.ejs", { transaction: transaction[0], entities: entities, accounts: accounts, user: req.user });
     } catch (err) {
       console.log(err);
     }
