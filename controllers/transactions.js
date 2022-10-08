@@ -85,8 +85,11 @@ module.exports = {
               }
             },
             payor: "$payor.name",
+            payorId: "$payor._id",
             payee: "$payee.name",
+            payeeId: "$payee._id",
             account: "$account.name",
+            accountId: "$account._id",
             amount: "$amount"
           }
         },

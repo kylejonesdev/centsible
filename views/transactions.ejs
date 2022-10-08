@@ -199,17 +199,17 @@
             <tr>
               <td><%= transactions[i].date %></td>
               <td>
-                <a class="link" href="/entities/<%= transactions[i].payor._id %>">
+                <a class="link" href="/entities/<%= transactions[i].payorId %>">
                   <%= transactions[i].payor %>
                 </a>
               </td>
               <td>
-                <a class="link" href="/entities/<%= transactions[i].payee._id %>">
+                <a class="link" href="/entities/<%= transactions[i].payeeId %>">
                   <%= transactions[i].payee %>
                 </a>
               </td>
               <td class="hidden sm:table-cell">
-                <a class="link" href="/accounts/<%= transactions[i].account._id %>">
+                <a class="link" href="/accounts/<%= transactions[i].accountId %>">
                   <%= transactions[i].account %>
                 </a>
               </td>        
