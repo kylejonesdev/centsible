@@ -2581,6 +2581,16 @@ body[dir="rtl"] .checkbox:checked,
   margin-right: 0.5rem;
 }
 
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mx-28 {
+  margin-left: 7rem;
+  margin-right: 7rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -2657,6 +2667,18 @@ body[dir="rtl"] .checkbox:checked,
   height: 2rem;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.min-h-0 {
+  min-height: 0px;
+}
+
 .w-full {
   width: 100%;
 }
@@ -2715,6 +2737,10 @@ body[dir="rtl"] .checkbox:checked,
 
 .flex-1 {
   flex: 1 1 0%;
+}
+
+.flex-none {
+  flex: none;
 }
 
 .flex-shrink-0 {
