@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const TransactionSchema = mongoose.Schema( {
+const TransactionSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -10,15 +10,15 @@ const TransactionSchema = mongoose.Schema( {
         type: Date,
         default: Date.now()
     },
-    payor: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Entity'
-    },
     payee: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Entity'
+    },
+    type: {
+        type: String,
+        enum: ['Income', 'Expense'],
+        required: true
     },
     date: {
         type: Date,
@@ -28,9 +28,13 @@ const TransactionSchema = mongoose.Schema( {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account'
     },
-    amount: {
+    income: {
         type: Number,
-        required: true
+        required: true,
+    },
+    expense: {
+        type: Number,
+        required: true,
     },
     description: {
         type: String,

@@ -20,45 +20,30 @@ module.exports = {
             let sortOrder = req.params.sortOrder;
             switch(sortOrder) {
                 case 'date':
-                    sortOrder = { date: 1 }
-                    break;
-                case 'payor':
-                    sortOrder = { payor: 1 }
-                    break;
+                  sortOrder = { date: -1 }
+                  break;
                 case 'payee':
-                    sortOrder = { payee: 1 }
-                    break;
-                case 'amount':
-                    sortOrder = { amount: -1 }
-                    break;
+                  sortOrder = { payee: 1 }
+                  break;
+                case 'type':
+                  sortOrder = { type: 1 }
+                  break;
+                case 'income':
+                  sortOrder = { amount: -1 }
+                  break;
+                case 'expense':
+                  sortOrder = { amount: -1 }
+                  break;
                 default:
-                    sortOrder = { date: -1 }
+                  sortOrder = { date: -1 }
             }
             const entity = await Entity.findOne({ _id: req.params.id });
             const relevantTransactions = await Transaction
             .aggregate([
                 {
                   $match: { //find the following with all conditions true
-                    $or: [
-                      {
-                        payor: new mongoose.Types.ObjectId(req.params.id)
-                      },
-                      {
                         payee: new mongoose.Types.ObjectId(req.params.id)
-                      },
-                    ]
-                  } 
-                },
-                {
-                  $lookup: { //join entities collection to payor id to get the payor name
-                    from: "entities",
-                    localField: "payor",
-                    foreignField: "_id",
-                    as: "payor"
                   }
-                },
-                {
-                  $unwind: "$payor" //remove the joined object from the returned array
                 },
                 {
                   $lookup: { //join entities collection to payee id to get the payee name
@@ -90,21 +75,27 @@ module.exports = {
                         format: "%Y-%m-%d"
                       }
                     },
-                    payor: "$payor.name",
-                    payorId: "$payor._id",
                     payee: "$payee.name",
                     payeeId: "$payee._id",
+                    type: "$type",
                     account: "$account.name",
                     accountId: "$account._id",
-                    amount: "$amount"
+                    income: "$income",
+                    expense: "$expense",
                   }
                 },
+                {
+                  $sort: sortOrder
+                }
             ]);
             console.log(entity);
-            console.log(req.params.id)
             console.log(relevantTransactions);
-            const total = relevantTransactions.reduce((acc, item) => acc + item.amount, 0);
-            res.render("entity.ejs", { entity: entity, transactions: relevantTransactions, total: total, user: req.user });
+            const calculateTotal = (arr, transactionField) => {
+              return arr.reduce((acc, item) => {
+                return acc + item[transactionField]
+              }, 0);
+            }
+            res.render("entity.ejs", { entity: entity, transactions: relevantTransactions, totalIncome: calculateTotal(relevantTransactions, "income"), totalExpense: calculateTotal(relevantTransactions, "expense"), user: req.user });
         } catch(err) {
             console.error(err);
         }

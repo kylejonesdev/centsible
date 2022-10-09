@@ -67,49 +67,16 @@
       <h2 class="table-title">Summary</h2>
     </header>
     <section class="overflow-x-auto grid grid-cols-12 gap-4">
-      <div class="col-span-12 sm:col-span-6">
-        <h3 class="text-xl">Payor</h3>
-        <table class="table table-compact w-full">
-          <thead>
-              <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Amount</th>
-              </tr>
-          </thead>
-          <tbody>
-            <% if(!payorSorted.length) { %>
-              <tr>
-                <td colspan="6">
-                  <p class="text-center">No transactions found.</p>
-                </td>
-              </tr>
-            <% } %>
-            <% for(var i=0; i < payorSorted.length; i++) { %>          
-              <tr>
-                <td>
-                  <a class="link" href="/entities/<%= payorSorted[i]._id %>">
-                    <%= payorSorted[i].payor %>
-                  </a>
-                </td>
-                <td>$<%= payorSorted[i].total %></td>
-              </tr>
-            <% } %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Total</td>
-              <td>$ <%= payorTotal %></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+
       <div class="col-span-12 sm:col-span-6">
         <h3 class="text-xl">Payee</h3>
         <table class="table table-compact w-full">
           <thead>
               <tr>
                   <th scope="col">Name</th>
-                  <th scope="col">Amount</th>
+                  <th scope="col">Income</th>
+                  <th scope="col">Expense</th>
+                  <th scope="col">Net</th>
               </tr>
           </thead>
           <tbody>
@@ -127,14 +94,18 @@
                     <%= payeeSorted[i].payee %>
                   </a>
                 </td>
-                <td>$<%= payeeSorted[i].total %></td>
+                <td class="text-green-500">$<%= payeeSorted[i].totalIncome %></td>
+                <td class="text-red-500">- $<%= payeeSorted[i].totalExpense %></td>
+                <td>$<%= payeeSorted[i].totalIncome - payeeSorted[i].totalExpense %></td>
               </tr>
             <% } %>
           </tbody>
           <tfoot>
             <tr>
               <td>Total</td>
-              <td>$ <%= payeeTotal %></td>
+              <td class="text-green-500">$<%= payeeAllIncome %></td>
+              <td class="text-red-500">- $<%= payeeAllExpense %></td>
+              <td>$<%= payeeAllIncome - payeeAllExpense %></td>
             </tr>
           </tfoot>
         </table>
@@ -145,7 +116,9 @@
           <thead>
               <tr>
                   <th scope="col">Name</th>
-                  <th scope="col">Amount</th>
+                  <th scope="col">Income</th>
+                  <th scope="col">Expense</th>
+                  <th scope="col">Net</th>
               </tr>
           </thead>
           <tbody>
@@ -163,14 +136,18 @@
                     <%= accountSorted[i].account %>
                   </a>
                 </td>
-                <td>$<%= accountSorted[i].total %></td>
+                <td class="text-green-500">$<%= accountSorted[i].totalIncome %></td>
+                <td class="text-red-500">- $<%= accountSorted[i].totalExpense %></td>
+                <td>$<%= accountSorted[i].totalIncome - accountSorted[i].totalExpense %></td>
               </tr>
             <% } %>
           </tbody>
           <tfoot>
             <tr>
               <td>Total</td>
-              <td>$ <%= accountTotal %></td>
+              <td class="text-green-500">$<%= accountAllIncome %></td>
+              <td class="text-red-500">- $<%= accountAllExpense %></td>
+              <td>$<%= accountAllIncome - accountAllExpense %></td>
             </tr>
           </tfoot>
         </table>

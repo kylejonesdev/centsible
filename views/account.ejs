@@ -7,28 +7,16 @@
     <section>
       <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/accounts/<%= account._id %>?_method=PUT" method="POST">
         <div class="form-control col-span-12 sm:col-span-6">
-          <label for="date" class="label">
-            <span class="label-text">Date</span>
+          <label for="number" class="label">
+            <span class="label-text">Account #</span>
           </label>
-          <input id="date" class="input input-bordered" type="date" name="date" value=2022-01-01>
+          <input type="text" class="input input-bordered" id="number" name="number" value="<%= account.number %>">
         </div>
         <div class="form-control col-span-12 sm:col-span-6">
             <label for="name" class="label">
               <span class="label-text">Name</span>
             </label>
             <input type="text" class="input input-bordered" id="name" name="name" value="<%= account.name %>">
-        </div>
-        <div class="form-control col-span-12 sm:col-span-6">
-          <label for="number" class="form-label">
-            <span class="label-text">Account #</span>
-          </label>
-          <input type="text" class="input input-bordered" id="number" name="number" value="<%= account.number %>">
-        </div>
-        <div class="form-control col-span-12 sm:col-span-6">
-          <label for="type" class="form-label">
-            <span class="label-text">Account Type</span>
-          </label>
-          <input type="text" class="input input-bordered" id="type" name="type" value="<%= account.type %>"></input>
         </div>
         <div class="form-control col-span-12 sm:col-span-6">
           <label for="description" class="form-label">
@@ -55,15 +43,16 @@
             <th scope="col">
               <a class="link" href="/accounts/<%= account._id %>/sort/date">Date</a>                  
             </th>
-            <th scope="col">
-              <a class="link" href="/accounts/<%= account._id %>/sort/payor">Payor</a>
-            </th>
+
             <th scope="col">
               <a class="link" href="/accounts/<%= account._id %>/sort/payee">Payee</a>
             </th>
             <th scope="col">Account</th>
             <th scope="col">
-              <a class="link" href="/accounts/<%= account._id %>/sort/amount">Amount</a>
+              <a class="link" href="/accounts/<%= account._id %>/sort/income">Income</a>
+            </th>
+            <th scope="col">
+              <a class="link" href="/accounts/<%= account._id %>/sort/expense">Expense</a>
             </th>
             <th scope="col">Info/Delete</th>
           </tr>
@@ -80,21 +69,23 @@
             <tr>
               <td><%= transactions[i].date %></td>
               <td>
-                <a class="link" href="/entities/<%= transactions[i].payorId %>">
-                  <%= transactions[i].payor %>
-                </a>
-              </td>
-              <td>
                 <a class="link" href="/entities/<%= transactions[i].payeeId %>">
                   <%= transactions[i].payee %>
                 </a>
               </td>
               <td>
-                <a class="link" href="/accounts/<%= transactions[i].accountId %>">
-                  <%= transactions[i].account %>
-                </a>
-              </td>        
-              <td>$<%= transactions[i].amount %></td>          
+                <%= transactions[i].account %>
+              </td>
+              <% if(transactions[i].income) { %>
+                <td class="text-green-500">$<%= transactions[i].income %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>
+              <% if(transactions[i].expense) { %>
+                <td class="text-red-500">- $<%= transactions[i].expense %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>      
               <td class="flex gap-x-2">
                 <a class="btn btn-primary btn-xs fa-solid fa-ellipsis" href="/transactions/<%= transactions[i]._id %>"><span class="sr-only">Details</span></a>
                 <form action="/transactions/delete/<%= transactions[i].id %>?_method=DELETE" method="POST" class="col-3">
@@ -108,10 +99,10 @@
           <tr>
             <td></td>
             <td></td>
-            <td></td>
             <td>Total</td>
-            <td>$<%= total %></td>
-            <td></td>
+            <td class="text-green-500">$<%= totalIncome %></td>
+            <td class="text-red-500">- $<%= totalExpense %></td>
+            <td>= $<%= totalIncome - totalExpense %></td>
           </tr>
         </tfoot>
       </table>        

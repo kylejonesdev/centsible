@@ -44,17 +44,6 @@ module.exports = {
           } 
         },
         {
-          $lookup: { //join entities collection to payor id to get the payor name
-            from: "entities",
-            localField: "payor",
-            foreignField: "_id",
-            as: "payor"
-          }
-        },
-        {
-          $unwind: "$payor" //remove the joined object from the returned array
-        },
-        {
           $lookup: { //join entities collection to payee id to get the payee name
             from: "entities",
             localField: "payee",
@@ -84,10 +73,13 @@ module.exports = {
                 format: "%Y-%m-%d"
               }
             },
-            payor: "$payor.name",
             payee: "$payee.name",
+            payeeId: "$payee._id",
+            type: "$type",
             account: "$account.name",
-            amount: "$amount"
+            accountId: "$account._id",
+            income: "$income",
+            expense: "$expense",
           }
         },
         {
@@ -167,10 +159,13 @@ module.exports = {
       };
       const entities = await Entity.find({ user:req.user.id });
       const accounts = await Account.find({ user:req.user.id });
-      const total = transactions
-        .reduce((acc, item) => {
-          return acc + item.amount;
+      const calculateTotal = (arr, transactionField) => {
+        //console.log(transactionField);
+        return arr.reduce((acc, item) => {
+          //console.log(item[transactionField]);
+          return acc + item[transactionField]
         }, 0);
+      }
       if(!entities.length) {
         console.log("Creating example entities.");
         createExampleEntities(req);
@@ -180,7 +175,7 @@ module.exports = {
         createExampleAccounts(req);
       }
       console.log(transactions);
-      res.render("transactions.ejs", {transactions: transactions, entities: entities, accounts: accounts, user: req.user, total: total});
+      res.render("transactions.ejs", {transactions: transactions, totalIncome: calculateTotal(transactions, "income"), totalExpense: calculateTotal(transactions, "expense"), entities: entities, accounts: accounts, user: req.user});
     } catch(err) {
       console.error(err);
     }
@@ -200,17 +195,6 @@ module.exports = {
               },
             ]
           } 
-        },
-        {
-          $lookup: { //join entities collection to payor id to get the payor name
-            from: "entities",
-            localField: "payor",
-            foreignField: "_id",
-            as: "payor"
-          }
-        },
-        {
-          $unwind: "$payor" //remove the joined object from the returned array
         },
         {
           $lookup: { //join entities collection to payee id to get the payee name
@@ -242,13 +226,13 @@ module.exports = {
                 format: "%Y-%m-%d"
               }
             },
-            payor: "$payor.name",
-            payorId: "$payor._id",
             payee: "$payee.name",
             payeeId: "$payee._id",
+            type: "$type",
             account: "$account.name",
             accountId: "$account._id",
-            amount: "$amount"
+            income: "$income",
+            expense: "$expense",
           }
         },
       ]);
@@ -264,14 +248,14 @@ module.exports = {
     try {
       //Error Checking
       const errorMessages = [];
-      if(!req.body.payor) {
-        errorMessages.push({msg: "Payor is required."});
+      if(!req.body.date) {
+        errorMessages.push({msg: "Date is required."});
       }
       if(!req.body.payee) {
         errorMessages.push({msg: "Payee is required."});
       }
-      if(!req.body.date) {
-        errorMessages.push({msg: "Date is required."});
+      if(!req.body.type) {
+        errorMessages.push({msg: "Please select income or expense."});
       }
       if(!req.body.amount) {
         errorMessages.push({msg: "Amount is required."});
@@ -282,16 +266,24 @@ module.exports = {
         res.redirect("/transactions");
       }
       if(!errorMessages.length) {
-        //Create Transaction      
+        //Create Transaction
+        let incomeAmount = 0;
+        let expenseAmount = 0;    
+        if(req.body.type === "Income") {
+          incomeAmount = req.body.amount;
+        } else if (req.body.type === "Expense") {
+          expenseAmount = req.body.amount;
+        }
         if(req.file !== undefined) {
           const cloudinaryResult = await cloudinary.uploader.upload(req.file.path); // Upload image to cloudinary
           await Transaction.create({
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
             imageId: cloudinaryResult.public_id,
             imageURL: cloudinaryResult.secure_url,
@@ -300,11 +292,12 @@ module.exports = {
         } else {
           await Transaction.create({
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
           });
           console.log(`Add transaction for user ${req.user.id}. No image.`)
@@ -317,6 +310,13 @@ module.exports = {
   },
   updateTransaction: async (req, res) => {
     try {
+      let incomeAmount = 0;
+      let expenseAmount = 0;    
+      if(req.body.type === "Income") {
+        incomeAmount = req.body.amount;
+      } else if (req.body.type === "Expense") {
+        expenseAmount = req.body.amount;
+      }
       if(req.file !== undefined) {
         const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
         await Transaction.findOneAndUpdate(
@@ -324,11 +324,12 @@ module.exports = {
           {
             _id: req.params.id,
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
             imageId: cloudinaryResult.public_id,
             imageURL: cloudinaryResult.secure_url,  
@@ -340,11 +341,12 @@ module.exports = {
           {
             _id: req.params.id,
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
           }
         );
@@ -367,11 +369,11 @@ module.exports = {
       // Delete transaction from db
       await Transaction.deleteOne({ _id: req.params.id });
       console.log("Deleted transaction.");
-      res.redirect("/reports/dashboard");
+      res.redirect("/transactions");
     } catch (err) {
       console.log("Oops");
       console.error(err);
-      res.redirect("/reports/dashboard");
+      res.redirect("/transactions");
     }
   },
 };

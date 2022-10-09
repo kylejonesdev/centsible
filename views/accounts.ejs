@@ -7,23 +7,17 @@
     <section>
 
       <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/accounts/add" method="POST">
-        <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
+        <div class="form-control col-span-12 sm:col-span-6">
           <label for="number" class="label">
             <span class="label-text">Account #</span>
           </label>
           <input type="text" class="input input-bordered" id="number" name="number">
         </div>
-        <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
+        <div class="form-control col-span-12 sm:col-span-6">
           <label for="name" class="label">
             <span class="label-text">Name</span>
           </label>
           <input type="text" class="input input-bordered" id="name" name="name">
-        </div>
-        <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
-          <label for="type" class="label">
-            <span class="label-text">Type</span>
-          </label>
-          <input class="input input-bordered" id="type" name="type"></input>
         </div>
         <div class="form-control col-span-12 sm:col-span-6">
           <label for="description" class="label">
@@ -59,9 +53,6 @@
             <th>
               <a class="link" href="/accounts/sort/name">Name</a>
             </th>
-            <th>
-              <a class="link" href="/accounts/sort/type">Type</a>
-            </th>
             <th>Info/Delete</th>
           </tr>
         </thead>
@@ -77,8 +68,7 @@
                   <a class="link" href="/accounts/<%= accounts[i]._id %>">
                     <%= accounts[i].name %>
                   </a>
-                </td>
-              <td><%= accounts[i].type %></td>           
+                </td>          
               <td class="flex gap-x-2">
                 <a class="btn btn-primary btn-xs fa-solid fa-ellipsis" href="/accounts/<%= accounts[i]._id %>"><span class="sr-only">Details</span></a>
                 <form
