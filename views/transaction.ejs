@@ -11,8 +11,8 @@
           <tr>
             <th scope="col">Date</th>
             <th scope="col">Payee</th>
-            <th scope="col">Type</th>
             <th scope="col">Account</th>
+            <th scope="col">Type</th>
             <th scope="col">Amount</th>
           </tr>
         </thead>
@@ -27,16 +27,18 @@
               </a>
             </td>
             <td>
-                <%= transaction.type %>
-            </td>
-            <td>
               <a class="link" href="/accounts/<%= transaction.accountId %>">
                 <%= transaction.account %>
               </a>
-            </td>        
+            </td>   
             <td>
-              $<%= transaction.amount %>
-            </td>
+                <%= transaction.type %>
+            </td>     
+            <% if(transaction.income) { %>
+              <td class="text-green-500">$<%= transaction.income %></td>
+            <% } else { %>
+              <td class="text-red-500">- $<%= transaction.expense %></td>
+            <% } %>
           </tr>
         </tbody>
       </table>
@@ -110,7 +112,11 @@
             </label>
             <div class="input-group grid grid-cols-4">
               <span class="justify-center font-semibold bg-primary text-base-100">$</span>
-              <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.amount %>">
+              <% if(transaction.income) { %>
+                <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.income %>">
+              <% } else { %>
+                <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.expense %>">
+              <% } %>
             </div>
           </div>
           <div class="form-control col-span-12 sm:col-span-6 sm:row-span-2">

@@ -49,10 +49,10 @@
             </th>
             <th scope="col">Account</th>
             <th scope="col">
-              <a class="link" href="/accounts/<%= account._id %>/sort/type">Type</a>
+              <a class="link" href="/accounts/<%= account._id %>/sort/income">Income</a>
             </th>
             <th scope="col">
-              <a class="link" href="/accounts/<%= account._id %>/sort/amount">Amount</a>
+              <a class="link" href="/accounts/<%= account._id %>/sort/expense">Expense</a>
             </th>
             <th scope="col">Info/Delete</th>
           </tr>
@@ -76,12 +76,16 @@
               <td>
                 <%= transactions[i].account %>
               </td>
-              <td>                
-                <%= transactions[i].type %>
-              </td>     
-              <td>
-                $<%= transactions[i].amount %>
-              </td>          
+              <% if(transactions[i].income) { %>
+                <td class="text-green-500">$<%= transactions[i].income %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>
+              <% if(transactions[i].expense) { %>
+                <td class="text-red-500">- $<%= transactions[i].expense %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>      
               <td class="flex gap-x-2">
                 <a class="btn btn-primary btn-xs fa-solid fa-ellipsis" href="/transactions/<%= transactions[i]._id %>"><span class="sr-only">Details</span></a>
                 <form action="/transactions/delete/<%= transactions[i].id %>?_method=DELETE" method="POST" class="col-3">
@@ -95,10 +99,10 @@
           <tr>
             <td></td>
             <td></td>
-            <td></td>
             <td>Total</td>
-            <td>$<%= total %></td>
-            <td></td>
+            <td class="text-green-500">$<%= totalIncome %></td>
+            <td class="text-red-500">- $<%= totalExpense %></td>
+            <td>= $<%= totalIncome - totalExpense %></td>
           </tr>
         </tfoot>
       </table>        

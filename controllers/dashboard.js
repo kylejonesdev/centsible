@@ -27,92 +27,36 @@ module.exports = {
                 filterDateRangeStart = oneYearOneMonthAgo;
                 filterDateRangeEnd = oneYearAgo;
             }            
-            const payorSorted = await Transaction
-            .aggregate([
-                {
-                $match: { //find the following with all conditions true
-                    $and: [
-                    {
-                        user: new mongoose.Types.ObjectId(req.user.id)
-                    },
-                    {
-                        date: {
-                        $gte: new Date(filterDateRangeStart)
-                        }
-                    },
-                    {
-                        date: {
-                        $lte: new Date(filterDateRangeEnd)
-                        }
-                    }
-                    ]
-                } 
-                },
-                {
-                    $group: {
-                        _id:  "$payor",
-                        total: { $sum: "$amount" }
-                    }         
-                },
-                {
-                    $sort: {
-                        total: -1
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "entities",
-                        localField: "_id",
-                        foreignField: "_id",
-                        as: "payor"
-                    }
-                },
-                {
-                    $unwind: "$payor"
-                },
-                {
-                    $project: {
-                        payor: "$payor.name",
-                        total: "$total",
-                    }
-                },
-            ]);
             const payeeSorted = await Transaction
             .aggregate([
                 {
-                $match: { //find the following with all conditions true
-                    $and: [
-                    {
-                        user: new mongoose.Types.ObjectId(req.user.id)
-                    },
-                    {
-                        date: {
-                        $gte: new Date(filterDateRangeStart)
-                        }
-                    },
-                    {
-                        date: {
-                        $lte: new Date(filterDateRangeEnd)
-                        }
-                    }
-                    ]
-                } 
-                },
-                {
-                    $group: {
-                        _id:  "$payee",
-                        total: { $sum: "$amount" }
-                    }         
-                },
-                {
-                    $sort: {
-                        total: -1
+                    $match: {
+                        $and: [
+                            {
+                                user: new mongoose.Types.ObjectId(req.user.id)
+                            },
+                            {
+                                date: {
+                                $gte: new Date(filterDateRangeStart)
+                                }
+                            },
+                            {
+                                date: {
+                                $lte: new Date(filterDateRangeEnd)
+                                }
+                            }
+                        ]
                     }
                 },
+                // {
+                //     $sort: {
+                //         total: -1
+                //     }
+                // },
                 {
                     $lookup: {
                         from: "entities",
-                        localField: "_id",
+                        localField: "payee",
                         foreignField: "_id",
                         as: "payee"
                     }
@@ -122,15 +66,91 @@ module.exports = {
                 },
                 {
                     $project: {
+                        payeeId: "$payee._id",
                         payee: "$payee.name",
-                        total: "$total",
+                        income: "$income",
+                        expense: "$expense",
                     }
+                },
+                {
+                    $group: {
+                        _id:  "$payeeId",
+                        payee: {
+                            $first: "$payee"
+                        },
+                        totalIncome: {
+                            $sum: "$income"
+                        },
+                        totalExpense: {
+                            $sum: "$expense"
+                        }
+                    }                        
                 },
             ]);
             const accountSorted = await Transaction
             .aggregate([
                 {
-                $match: { //find the following with all conditions true
+                    $match: {
+                        $and: [
+                            {
+                                user: new mongoose.Types.ObjectId(req.user.id)
+                            },
+                            {
+                                date: {
+                                $gte: new Date(filterDateRangeStart)
+                                }
+                            },
+                            {
+                                date: {
+                                $lte: new Date(filterDateRangeEnd)
+                                }
+                            }
+                        ]
+                    }
+                },
+                // {
+                //     $sort: {
+                //         total: -1
+                //     }
+                // },
+                {
+                    $lookup: {
+                        from: "accounts",
+                        localField: "account",
+                        foreignField: "_id",
+                        as: "account"
+                    }
+                },
+                {
+                    $unwind: "$account"
+                },
+                {
+                    $project: {
+                        accountId: "$account._id",
+                        account: "$account.name",
+                        income: "$income",
+                        expense: "$expense",
+                    }
+                },
+                {
+                    $group: {
+                        _id:  "$accountId",
+                        account: {
+                            $first: "$account"
+                        },
+                        totalIncome: {
+                            $sum: "$income"
+                        },
+                        totalExpense: {
+                            $sum: "$expense"
+                        }
+                    }                        
+                },
+            ]);
+            const accountSorted2 = await Transaction
+            .aggregate([
+                {
+                $match: {
                     $and: [
                     {
                         user: new mongoose.Types.ObjectId(req.user.id)
@@ -173,25 +193,25 @@ module.exports = {
                 {
                     $project: {
                         account: "$account.name",
+                        type: "$type",
                         total: "$total",
                     }
                 },
             ]);
-            const calculateTotal = (sorted) => {
-                return sorted.reduce((acc, item) => item.total + acc, 0)
+            const calculateTotal = (arr, transactionField) => {
+                return arr.reduce((acc, item) => {
+                  return acc + item[transactionField]
+                }, 0);
             }
-            //console.log(transactions);
-            console.log(payorSorted);
-            console.log(payeeSorted);
+            //console.log(payeeSorted);
             console.log(accountSorted);
-            //console.log(total);
             res.render("dashboard.ejs", { 
-                payorSorted: payorSorted, 
-                payorTotal: calculateTotal(payorSorted), 
                 payeeSorted: payeeSorted,
-                payeeTotal: calculateTotal(payeeSorted),
+                payeeAllIncome: calculateTotal(payeeSorted, "totalIncome"),
+                payeeAllExpense: calculateTotal(payeeSorted, "totalExpense"),
                 accountSorted: accountSorted,
-                accountTotal: calculateTotal(accountSorted),
+                accountAllIncome: calculateTotal(accountSorted, "totalIncome"),
+                accountAllExpense: calculateTotal(accountSorted, "totalExpense"),
                 user: req.user 
             });
         } catch(err) {

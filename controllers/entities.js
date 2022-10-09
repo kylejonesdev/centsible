@@ -28,7 +28,10 @@ module.exports = {
                 case 'type':
                   sortOrder = { type: 1 }
                   break;
-                case 'amount':
+                case 'income':
+                  sortOrder = { amount: -1 }
+                  break;
+                case 'expense':
                   sortOrder = { amount: -1 }
                   break;
                 default:
@@ -77,7 +80,8 @@ module.exports = {
                     type: "$type",
                     account: "$account.name",
                     accountId: "$account._id",
-                    amount: "$amount"
+                    income: "$income",
+                    expense: "$expense",
                   }
                 },
                 {
@@ -85,10 +89,13 @@ module.exports = {
                 }
             ]);
             console.log(entity);
-            console.log(req.params.id)
             console.log(relevantTransactions);
-            const total = relevantTransactions.reduce((acc, item) => acc + item.amount, 0);
-            res.render("entity.ejs", { entity: entity, transactions: relevantTransactions, total: total, user: req.user });
+            const calculateTotal = (arr, transactionField) => {
+              return arr.reduce((acc, item) => {
+                return acc + item[transactionField]
+              }, 0);
+            }
+            res.render("entity.ejs", { entity: entity, transactions: relevantTransactions, totalIncome: calculateTotal(relevantTransactions, "income"), totalExpense: calculateTotal(relevantTransactions, "expense"), user: req.user });
         } catch(err) {
             console.error(err);
         }

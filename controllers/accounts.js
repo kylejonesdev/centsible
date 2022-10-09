@@ -35,10 +35,10 @@ module.exports = {
                 case 'payee':
                     sortOrder = { payee: 1 }
                     break;
-                case 'type':
-                    sortOrder = { type: 1 }
+                case 'income':
+                    sortOrder = { amount: -1 }
                     break;
-                case 'amount':
+                case 'expense':
                     sortOrder = { amount: -1 }
                     break;
                 default:
@@ -86,13 +86,19 @@ module.exports = {
                     payeeId: "$payee._id",
                     account: "$account.name",
                     accountId: "$account._id",
-                    type: "$type",
-                    amount: "$amount"
+                    income: "$income",
+                    expense: "$expense",
                   }
                 },
             ]);
-            const total = relevantTransactions.reduce((acc, item) => acc + item.amount, 0);
-            res.render("account.ejs", { account: account, transactions: relevantTransactions, total: total, user: req.user });
+            const calculateTotal = (arr, transactionField) => {
+                //console.log(transactionField);
+                return arr.reduce((acc, item) => {
+                  //console.log(item[transactionField]);
+                  return acc + item[transactionField]
+                }, 0);
+            }
+            res.render("account.ejs", { account: account, transactions: relevantTransactions, totalIncome: calculateTotal(relevantTransactions, "income"), totalExpense: calculateTotal(relevantTransactions, "expense"), user: req.user });
         } catch(err) {
             console.error(err);
         }

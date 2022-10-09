@@ -78,7 +78,8 @@ module.exports = {
             type: "$type",
             account: "$account.name",
             accountId: "$account._id",
-            amount: "$amount"
+            income: "$income",
+            expense: "$expense",
           }
         },
         {
@@ -158,10 +159,13 @@ module.exports = {
       };
       const entities = await Entity.find({ user:req.user.id });
       const accounts = await Account.find({ user:req.user.id });
-      const total = transactions
-        .reduce((acc, item) => {
-          return acc + item.amount;
+      const calculateTotal = (arr, transactionField) => {
+        //console.log(transactionField);
+        return arr.reduce((acc, item) => {
+          //console.log(item[transactionField]);
+          return acc + item[transactionField]
         }, 0);
+      }
       if(!entities.length) {
         console.log("Creating example entities.");
         createExampleEntities(req);
@@ -171,7 +175,7 @@ module.exports = {
         createExampleAccounts(req);
       }
       console.log(transactions);
-      res.render("transactions.ejs", {transactions: transactions, entities: entities, accounts: accounts, user: req.user, total: total});
+      res.render("transactions.ejs", {transactions: transactions, totalIncome: calculateTotal(transactions, "income"), totalExpense: calculateTotal(transactions, "expense"), entities: entities, accounts: accounts, user: req.user});
     } catch(err) {
       console.error(err);
     }
@@ -227,7 +231,8 @@ module.exports = {
             type: "$type",
             account: "$account.name",
             accountId: "$account._id",
-            amount: "$amount"
+            income: "$income",
+            expense: "$expense",
           }
         },
       ]);
@@ -261,7 +266,14 @@ module.exports = {
         res.redirect("/transactions");
       }
       if(!errorMessages.length) {
-        //Create Transaction      
+        //Create Transaction
+        let incomeAmount = 0;
+        let expenseAmount = 0;    
+        if(req.body.type === "Income") {
+          incomeAmount = req.body.amount;
+        } else if (req.body.type === "Expense") {
+          expenseAmount = req.body.amount;
+        }
         if(req.file !== undefined) {
           const cloudinaryResult = await cloudinary.uploader.upload(req.file.path); // Upload image to cloudinary
           await Transaction.create({
@@ -270,7 +282,8 @@ module.exports = {
             payee: req.body.payee,
             type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
             imageId: cloudinaryResult.public_id,
             imageURL: cloudinaryResult.secure_url,
@@ -283,7 +296,8 @@ module.exports = {
             payee: req.body.payee,
             type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
           });
           console.log(`Add transaction for user ${req.user.id}. No image.`)
@@ -296,6 +310,13 @@ module.exports = {
   },
   updateTransaction: async (req, res) => {
     try {
+      let incomeAmount = 0;
+      let expenseAmount = 0;    
+      if(req.body.type === "Income") {
+        incomeAmount = req.body.amount;
+      } else if (req.body.type === "Expense") {
+        expenseAmount = req.body.amount;
+      }
       if(req.file !== undefined) {
         const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
         await Transaction.findOneAndUpdate(
@@ -307,7 +328,8 @@ module.exports = {
             payee: req.body.payee,
             type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
             imageId: cloudinaryResult.public_id,
             imageURL: cloudinaryResult.secure_url,  
@@ -323,7 +345,8 @@ module.exports = {
             payee: req.body.payee,
             type: req.body.type,
             account: req.body.account,
-            amount: req.body.amount,
+            income: incomeAmount,
+            expense: expenseAmount,
             description: req.body.description,
           }
         );

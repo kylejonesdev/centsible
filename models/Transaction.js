@@ -28,9 +28,13 @@ const TransactionSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Account'
     },
-    amount: {
+    income: {
         type: Number,
-        required: true
+        required: true,
+    },
+    expense: {
+        type: Number,
+        required: true,
     },
     description: {
         type: String,

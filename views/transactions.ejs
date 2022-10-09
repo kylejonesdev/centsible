@@ -179,10 +179,9 @@
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Payee</th>
-                <th scope="col" class="hidden sm:table-cell">Account</th>
-                <th scope="col">Type</th>
-                <th scope="col" class="hidden sm:table-cell">Amount</th>
-                <th scope="col" class="sm:hidden">Amt</th>
+                <th scope="col">Account</th>
+                <th scope="col">Income</th>
+                <th scope="col">Expense</th>
                 <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
                 <th scope="col" class="sm:hidden">Extra</th>
             </tr>
@@ -203,15 +202,21 @@
                   <%= transactions[i].payee %>
                 </a>
               </td>
-              <td class="hidden sm:table-cell">
+              <td>
                 <a class="link" href="/accounts/<%= transactions[i].accountId %>">
                   <%= transactions[i].account %>
                 </a>
               </td>
-              <td>
-                <%= transactions[i].type %>
-              </td>
-              <td>$<%= transactions[i].amount %></td>          
+              <% if(transactions[i].income) { %>
+                <td class="text-green-500">$<%= transactions[i].income %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>
+              <% if(transactions[i].expense) { %>
+                <td class="text-red-500">- $<%= transactions[i].expense %></td>
+              <% } else { %>
+                <td></td>
+              <% } %>
               <td class="flex gap-x-2">
                 <a href="/transactions/<%= transactions[i]._id %>">
                   <button class="btn btn-primary btn-xs fa-solid fa-ellipsis" value="transaction-details"><span class=sr-only>Details</span></button>
@@ -227,10 +232,10 @@
           <tr>
             <td></td>
             <td></td>
-            <td class="hidden sm:table-cell"></td>
             <td>Total</td>
-            <td>$<%= total %></td>
-            <td></td>
+            <td class="text-green-500">$<%= totalIncome %></td>
+            <td class="text-red-500">- $<%= totalExpense %></td>
+            <td>= $<%= totalIncome - totalExpense %></td>
           </tr>
         </tfoot>
       </table>        
