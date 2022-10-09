@@ -8,13 +8,10 @@ module.exports = {
             let sortOrder = req.params.sortOrder;
             switch(sortOrder) {
                 case 'number':
-                    sortOrder = { number: -1 }
+                    sortOrder = { number: 1 }
                     break;
                 case 'name':
                     sortOrder = { name: 1 }
-                    break;
-                case 'type':
-                    sortOrder = { type: 1 }
                     break;
                 default:
                     sortOrder = { number: 1 }
@@ -33,13 +30,13 @@ module.exports = {
             let sortOrder = req.params.sortOrder;
             switch(sortOrder) {
                 case 'date':
-                    sortOrder = { date: 1 }
-                    break;
-                case 'payor':
-                    sortOrder = { payor: 1 }
+                    sortOrder = { date: -1 }
                     break;
                 case 'payee':
                     sortOrder = { payee: 1 }
+                    break;
+                case 'type':
+                    sortOrder = { type: 1 }
                     break;
                 case 'amount':
                     sortOrder = { amount: -1 }
@@ -54,17 +51,6 @@ module.exports = {
                   $match: { //find the following with all conditions true
                         account: new mongoose.Types.ObjectId(req.params.id)
                     },
-                },
-                {
-                  $lookup: { //join entities collection to payor id to get the payor name
-                    from: "entities",
-                    localField: "payor",
-                    foreignField: "_id",
-                    as: "payor"
-                  }
-                },
-                {
-                  $unwind: "$payor" //remove the joined object from the returned array
                 },
                 {
                   $lookup: { //join entities collection to payee id to get the payee name
@@ -96,12 +82,11 @@ module.exports = {
                         format: "%Y-%m-%d"
                       }
                     },
-                    payor: "$payor.name",
-                    payorId: "$payor._id",
                     payee: "$payee.name",
                     payeeId: "$payee._id",
                     account: "$account.name",
                     accountId: "$account._id",
+                    type: "$type",
                     amount: "$amount"
                   }
                 },
@@ -118,7 +103,6 @@ module.exports = {
                 {
                     name: req.body.name,
                     number: req.body.number,
-                    type: req.body.type, //how to limit type to a few options at the DB level?
                     description: req.body.description,
                     user: req.user.id,
                 }
@@ -135,7 +119,6 @@ module.exports = {
                 {
                     name: req.body.name,
                     number: req.body.number,
-                    type: req.body.type, //how to limit type to a few options at the DB level?
                     description: req.body.description,
                     user: req.user.id,
                 }

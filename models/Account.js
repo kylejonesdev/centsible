@@ -12,11 +12,6 @@ const AccountSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        type: //how to limit type to a few options at the DB level?
-        {
-            type: String,
-            required: true
-        },
         description:
         {
             type: String

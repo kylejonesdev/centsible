@@ -44,17 +44,6 @@ module.exports = {
           } 
         },
         {
-          $lookup: { //join entities collection to payor id to get the payor name
-            from: "entities",
-            localField: "payor",
-            foreignField: "_id",
-            as: "payor"
-          }
-        },
-        {
-          $unwind: "$payor" //remove the joined object from the returned array
-        },
-        {
           $lookup: { //join entities collection to payee id to get the payee name
             from: "entities",
             localField: "payee",
@@ -84,10 +73,9 @@ module.exports = {
                 format: "%Y-%m-%d"
               }
             },
-            payor: "$payor.name",
-            payorId: "$payor._id",
             payee: "$payee.name",
             payeeId: "$payee._id",
+            type: "$type",
             account: "$account.name",
             accountId: "$account._id",
             amount: "$amount"
@@ -205,17 +193,6 @@ module.exports = {
           } 
         },
         {
-          $lookup: { //join entities collection to payor id to get the payor name
-            from: "entities",
-            localField: "payor",
-            foreignField: "_id",
-            as: "payor"
-          }
-        },
-        {
-          $unwind: "$payor" //remove the joined object from the returned array
-        },
-        {
           $lookup: { //join entities collection to payee id to get the payee name
             from: "entities",
             localField: "payee",
@@ -245,10 +222,9 @@ module.exports = {
                 format: "%Y-%m-%d"
               }
             },
-            payor: "$payor.name",
-            payorId: "$payor._id",
             payee: "$payee.name",
             payeeId: "$payee._id",
+            type: "$type",
             account: "$account.name",
             accountId: "$account._id",
             amount: "$amount"
@@ -267,14 +243,14 @@ module.exports = {
     try {
       //Error Checking
       const errorMessages = [];
-      if(!req.body.payor) {
-        errorMessages.push({msg: "Payor is required."});
+      if(!req.body.date) {
+        errorMessages.push({msg: "Date is required."});
       }
       if(!req.body.payee) {
         errorMessages.push({msg: "Payee is required."});
       }
-      if(!req.body.date) {
-        errorMessages.push({msg: "Date is required."});
+      if(!req.body.type) {
+        errorMessages.push({msg: "Please select income or expense."});
       }
       if(!req.body.amount) {
         errorMessages.push({msg: "Amount is required."});
@@ -290,9 +266,9 @@ module.exports = {
           const cloudinaryResult = await cloudinary.uploader.upload(req.file.path); // Upload image to cloudinary
           await Transaction.create({
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
             amount: req.body.amount,
             description: req.body.description,
@@ -303,9 +279,9 @@ module.exports = {
         } else {
           await Transaction.create({
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
             amount: req.body.amount,
             description: req.body.description,
@@ -327,9 +303,9 @@ module.exports = {
           {
             _id: req.params.id,
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
             amount: req.body.amount,
             description: req.body.description,
@@ -343,9 +319,9 @@ module.exports = {
           {
             _id: req.params.id,
             user: req.user.id,
-            payor: req.body.payor,
-            payee: req.body.payee,
             date: req.body.date,
+            payee: req.body.payee,
+            type: req.body.type,
             account: req.body.account,
             amount: req.body.amount,
             description: req.body.description,
@@ -370,11 +346,11 @@ module.exports = {
       // Delete transaction from db
       await Transaction.deleteOne({ _id: req.params.id });
       console.log("Deleted transaction.");
-      res.redirect("/reports/dashboard");
+      res.redirect("/transactions");
     } catch (err) {
       console.log("Oops");
       console.error(err);
-      res.redirect("/reports/dashboard");
+      res.redirect("/transactions");
     }
   },
 };
