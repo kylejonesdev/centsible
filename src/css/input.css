@@ -7,7 +7,10 @@
         min-height: 75vh;
     }
     section {
-        @apply mx-1 sm:mx-8 mb-12 mt-4
+        @apply p-4
+    }
+    table {
+        @apply shadow-lg
     }
 }
 
@@ -19,13 +22,28 @@
     .section-title {
         @apply text-4xl mx-4
     }
+    .main-card {
+        @apply bg-base-100 my-4 sm:card sm:p-4 sm:mx-4 shadow-lg
+    }
+    .btn {
+        @apply shadow-md
+    }
+    .btn-primary {
+        @apply text-base-100 text-opacity-100
+    }
+    .btn-filter-sort {
+        @apply collapse-title btn btn-primary w-36 mb-2 mt-8 mx-8 p-0 min-h-0
+    }
     .table-title {
         @apply text-4xl mx-4 mb-8
     }
-    .btn-primary {
-        @apply text-white text-opacity-100
+    .collapse .table-title {
+        @apply text-4xl mx-8 mt-6 text-base-100 
     }
     .table :where(thead, tfoot) :where(th, td) {
         @apply bg-primary text-base-100
+    }
+    .table th:first-child {
+        position: relative
     }
 }

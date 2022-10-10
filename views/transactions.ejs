@@ -1,244 +1,250 @@
 <%- include('partials/header') -%> 
   <main class="sm:container mx-auto">
-    <header>
-      <h1 class="page-title">Transactions</h1>
-      <h2 class="section-title">Add a Transaction</h2>
-    </header>
-    <section>
-      <% if(locals.messages.errors){ %>
-        <% messages.errors.forEach(item => { %>
-          <div class="alert alert-error my-2">
-            <div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span><%= item.msg %></span>
-            </div>
-          </div>
-        <% }) %>
-      <% } %>
-      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/add" enctype="multipart/form-data" method="POST">
-        <div class="form-control col-span-12 md:col-span-6">
-          <label for="payee" class="label">
-            <span class="label-text">Payee</span>
-          </label>
-          <div class="input-group">
-            <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
-              <option disabled selected value="">Select</option>
-              <% for(let i = 0; i < entities.length; i++) { %>
-                <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
-              <% } %>
-            </select>
-            <a href="/entities" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
-          </div>
-        </div>
-        <div class="form-control col-span-12 md:col-span-6">
-          <label for="account" class="label">
-            <span class="label-text">Account</span>
-          </label>
-          <div class="input-group">
-            <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
-              <option disabled selected value="">Select</option>
-              <% for(let i = 0; i < accounts.length; i++) { %>
-                <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
-              <% } %>
-            </select>
-            <a href="/accounts" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
-          </div>
-        </div>
-        <div class="grid grid-cols-4 gap-x-8 col-span-12 md:col-span-6 md:self-end md:mb-2">
-          <div class="form-control col-span-1 justify-self-start">
-            <label class="label cursor-pointer">
-              <span class="label-text mr-2">Income</span> 
-              <input type="radio" name="type" class="radio checked:bg-green-500" value="Income"/>
-            </label>
-          </div>
-          <div class="form-control col-span-1 justify-self-start">
-            <label class="label cursor-pointer ">
-              <span class="label-text mr-2">Expense</span> 
-              <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense" />
-            </label>
-          </div>
-        </div>
-        <div class="form-control col-span-6">
-          <label for="date" class="label">
-            <span class="label-text">Date</span>
-          </label>
-          <input id="date" class="input input-bordered" type="date" name="date" value=2022-01-01>
-        </div>
-        <div class="form-control col-span-6">
-          <label for="amount" class="label">
-            <span class="label-text">Amount</span>
-          </label>
-          <div class="input-group grid grid-cols-5">
-            <span class="justify-center font-semibold bg-primary text-base-100">$</span>
-            <input id="amount" class="input input-bordered col-span-4" type="number" value="0.00" name="amount">
-          </div>
-        </div>
-        <div class="form-control col-span-12 sm:col-span-6">
-          <label for="description" class="label">
-            <span class="label-text">Description</span>
-          </label>
-          <textarea class="textarea textarea-bordered" id="description" name="description"></textarea>
-        </div>
-        <div class="form-control col-span-12 sm:col-span-6">
-          <label for="imgUpload" class="label">
-            <span class="label-text">Documentation</span>
-          </label>
-          <input id="imgUpload" type="file" class="input input-bordered file:btn file:btn-primary file:h-full file:hover:bg-primary-focus file:mr-4 file:-ml-4 file:px-4 file:rounded-r-none" name="file">              
-        </div>
-        <div class="col-span-12 justify-self-center mt-8">
-          <button id="add-transaction" class="btn btn-accent" type="submit">Add Transaction</button>
-        </div>
-      </form>
-    </section>
-    <header>
-      <h2 class="table-title">Transactions</h2>
-      <div class="collapse mx-8"> <!-- Filters collapsible section -->
-        <input type="checkbox" />
-        <button class="collapse-title btn btn-primary w-36 m-0 p-0">
-          Filter & Sort
-        </button>
-        <div class="collapse-content">          
-          <form action="/transactions/filter" method="POST"> <!-- Filter form -->
-            <div class="grid grid-cols-12 gap-4">
-              <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
-              <div class="col-span-9 flex my-2"> <!-- Filter by date -->
-                <div class="form-control mr-4">
-                  <label for="filterDateRangeStart" class="label">
-                    <span class="label-text">Start Date</span>
-                  </label>
-                  <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
-                </div>
-                <div class="form-control">
-                  <label for="filterDateRangeEnd" class="label">
-                    <span class="label-text">End Date</span>
-                  </label>
-                  <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
-                </div>
-              </div>
-              <div class="col-span-12 grid grid-cols-12 border-y-2">
-                <h3 class="col-span-3 self-center text-xl">Sort By</h3>
-                <div class="col-span-9 flex flex-wrap justify-between my-4"> <!-- Sort by field -->
-                  <div class="form-control items-start">
-                    <label class="label cursor-pointer">
-                      <span class="label-text">Date</span> 
-                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="date" checked />
-                    </label>
-                  </div>
-                  <div class="form-control items-start">
-                    <label class="label cursor-pointer">
-                      <span class="label-text">Payee</span> 
-                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="payee" />
-                    </label>
-                  </div>
-                  <div class="form-control items-start">
-                    <label class="label cursor-pointer">
-                      <span class="label-text">Account</span> 
-                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="account" />
-                    </label>
-                  </div>
-                  <div class="form-control items-start">
-                    <label class="label cursor-pointer">
-                      <span class="label-text">Type</span> 
-                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="type" />
-                    </label>
-                  </div>
-                  <div class="form-control items-start">
-                    <label class="label cursor-pointer">
-                      <span class="label-text">Amount</span> 
-                      <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="amount" />
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <h3 class="col-span-3 self-center text-xl">Sort Direction</h3>
-              <div class="col-span-9 flex flex-wrap items-start my-2">              
-                <div class="form-control items-start"> <!-- Sort direction -->
-                  <label class="label cursor-pointer">
-                    <span class="label-text">Ascending</span> 
-                    <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="1" />
-                  </label>
-                </div>
-                <div class="form-control items-start">
-                  <label class="label cursor-pointer">
-                    <span class="label-text">Descending</span> 
-                    <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="-1" checked />
-                  </label>
-                </div>              
+    <div class="main-card">
+      <header>
+        <h1 class="page-title">Transactions</h1>
+        <h2 class="section-title">Add a Transaction</h2>
+      </header>
+      <section>
+        <% if(locals.messages.errors){ %>
+          <% messages.errors.forEach(item => { %>
+            <div class="alert alert-error my-2">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span><%= item.msg %></span>
               </div>
             </div>
-            <div class="flex justify-center mt-4">
-              <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
-            </div>      
-          </form> <!-- End filter form-->          
+          <% }) %>
+        <% } %>
+        <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/add" enctype="multipart/form-data" method="POST">
+          <div class="form-control col-span-12 md:col-span-6">
+            <label for="payee" class="label">
+              <span class="label-text">Payee</span>
+            </label>
+            <div class="input-group">
+              <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
+                <option disabled selected value="">Select</option>
+                <% for(let i = 0; i < entities.length; i++) { %>
+                  <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+                <% } %>
+              </select>
+              <a href="/entities" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
+            </div>
+          </div>
+          <div class="form-control col-span-12 md:col-span-6">
+            <label for="account" class="label">
+              <span class="label-text">Account</span>
+            </label>
+            <div class="input-group">
+              <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
+                <option disabled selected value="">Select</option>
+                <% for(let i = 0; i < accounts.length; i++) { %>
+                  <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
+                <% } %>
+              </select>
+              <a href="/accounts" class="btn btn-primary w-1/6 md:w-1/3 pl-2">Add</a>
+            </div>
+          </div>
+          <div class="grid grid-cols-4 gap-x-8 col-span-12 md:col-span-6 md:self-end md:mb-2">
+            <div class="form-control col-span-1 justify-self-start">
+              <label class="label cursor-pointer">
+                <span class="label-text mr-2">Income</span> 
+                <input type="radio" name="type" class="radio checked:bg-green-500" value="Income"/>
+              </label>
+            </div>
+            <div class="form-control col-span-1 justify-self-start">
+              <label class="label cursor-pointer ">
+                <span class="label-text mr-2">Expense</span> 
+                <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense" />
+              </label>
+            </div>
+          </div>
+          <div class="form-control col-span-6">
+            <label for="date" class="label">
+              <span class="label-text">Date</span>
+            </label>
+            <input id="date" class="input input-bordered" type="date" name="date" value=2022-01-01>
+          </div>
+          <div class="form-control col-span-6">
+            <label for="amount" class="label">
+              <span class="label-text">Amount</span>
+            </label>
+            <div class="input-group grid grid-cols-5">
+              <span class="justify-center font-semibold bg-base-200 text-inherit">$</span>
+              <input id="amount" class="input input-bordered col-span-4" type="number" value="0.00" name="amount">
+            </div>
+          </div>
+          <div class="form-control col-span-12 sm:col-span-6">
+            <label for="description" class="label">
+              <span class="label-text">Description</span>
+            </label>
+            <textarea class="textarea textarea-bordered" id="description" name="description"></textarea>
+          </div>
+          <div class="form-control col-span-12 sm:col-span-6">
+            <label for="imgUpload" class="label">
+              <span class="label-text">Documentation</span>
+            </label>
+            <input id="imgUpload" type="file" class="input input-bordered file:btn file:btn-primary file:h-full file:hover:bg-primary-focus file:mr-4 file:-ml-4 file:px-4 file:rounded-r-none" name="file">              
+          </div>
+          <div class="col-span-12 justify-self-center mt-8">
+            <button id="add-transaction" class="btn btn-accent" type="submit">Add Transaction</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <!-- <div class=" bg-white sm:card sm:m-4 p-4"> -->
+      <header class="px-4">
+        
+        <div class="collapse"> <!-- Filters collapsible section -->
+          <h2 class="table-title">Transactions</h2>
+          <input type="checkbox" class="min-h-0 w-36" />
+          <button class="btn-filter-sort">
+            Filter & Sort
+          </button>
+          <div class="collapse-content bg-base-100 card">          
+            <form action="/transactions/filter" method="POST"> <!-- Filter form -->
+              <div class="grid grid-cols-12 gap-4">
+                <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
+                <div class="col-span-9 flex my-2"> <!-- Filter by date -->
+                  <div class="form-control mr-4">
+                    <label for="filterDateRangeStart" class="label">
+                      <span class="label-text">Start Date</span>
+                    </label>
+                    <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
+                  </div>
+                  <div class="form-control">
+                    <label for="filterDateRangeEnd" class="label">
+                      <span class="label-text">End Date</span>
+                    </label>
+                    <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
+                  </div>
+                </div>
+                <div class="col-span-12 grid grid-cols-12 border-y-2">
+                  <h3 class="col-span-3 self-center text-xl">Sort By</h3>
+                  <div class="col-span-9 flex flex-wrap justify-between my-4"> <!-- Sort by field -->
+                    <div class="form-control items-start">
+                      <label class="label cursor-pointer">
+                        <span class="label-text">Date</span> 
+                        <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="date" checked />
+                      </label>
+                    </div>
+                    <div class="form-control items-start">
+                      <label class="label cursor-pointer">
+                        <span class="label-text">Payee</span> 
+                        <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="payee" />
+                      </label>
+                    </div>
+                    <div class="form-control items-start">
+                      <label class="label cursor-pointer">
+                        <span class="label-text">Account</span> 
+                        <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="account" />
+                      </label>
+                    </div>
+                    <div class="form-control items-start">
+                      <label class="label cursor-pointer">
+                        <span class="label-text">Type</span> 
+                        <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="type" />
+                      </label>
+                    </div>
+                    <div class="form-control items-start">
+                      <label class="label cursor-pointer">
+                        <span class="label-text">Amount</span> 
+                        <input type="radio" name="filterSortBy" class="radio checked:bg-primary mx-2" value="amount" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <h3 class="col-span-3 self-center text-xl">Sort Direction</h3>
+                <div class="col-span-9 flex flex-wrap items-start my-2">              
+                  <div class="form-control items-start"> <!-- Sort direction -->
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Ascending</span> 
+                      <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="1" />
+                    </label>
+                  </div>
+                  <div class="form-control items-start">
+                    <label class="label cursor-pointer">
+                      <span class="label-text">Descending</span> 
+                      <input type="radio" class="radio checked:bg-primary mx-2" name="filterSortDirection" value="-1" checked />
+                    </label>
+                  </div>              
+                </div>
+              </div>
+              <div class="flex justify-center mt-4">
+                <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
+              </div>      
+            </form> <!-- End filter form-->          
+          </div>
         </div>
-      </div>
-    </header>
-    <section class="overflow-x-auto">
-      <table class="table table-compact w-full">
-        <thead>
+      </header>
+      <section class="overflow-x-auto">
+        <table class="table table-compact w-full">
+          <thead>
+              <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Payee</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Income</th>
+                  <th scope="col">Expense</th>
+                  <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
+                  <th scope="col" class="sm:hidden">Extra</th>
+              </tr>
+          </thead>
+          <tbody>
+            <% if(!transactions.length) { %>
+              <tr>
+                <td colspan="6">
+                  <p class="text-center">No transactions found.</p>
+                </td>
+              </tr>
+            <% } %>
+            <% for(var i=0; i < transactions.length; i++) { %>          
+              <tr>
+                <td><%= transactions[i].date %></td>
+                <td>
+                  <a class="link" href="/entities/<%= transactions[i].payeeId %>">
+                    <%= transactions[i].payee %>
+                  </a>
+                </td>
+                <td>
+                  <a class="link" href="/accounts/<%= transactions[i].accountId %>">
+                    <%= transactions[i].account %>
+                  </a>
+                </td>
+                <% if(transactions[i].income) { %>
+                  <td class="text-green-500">$<%= transactions[i].income %></td>
+                <% } else { %>
+                  <td></td>
+                <% } %>
+                <% if(transactions[i].expense) { %>
+                  <td class="text-red-500">- $<%= transactions[i].expense %></td>
+                <% } else { %>
+                  <td></td>
+                <% } %>
+                <td class="flex gap-x-2">
+                  <a href="/transactions/<%= transactions[i]._id %>">
+                    <button class="btn btn-outline btn-primary btn-xs fa-solid fa-ellipsis" value="transaction-details"><span class=sr-only>Details</span></button>
+                  </a>
+                  <form action="/transactions/delete/<%= transactions[i]._id %>?_method=DELETE" method="POST">
+                    <button class="btn btn-error btn-xs fa fa-trash" type="submit" value="delete-transaction"><span class=sr-only>Delete</span></button>
+                  </form>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+          <tfoot>
             <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Payee</th>
-                <th scope="col">Account</th>
-                <th scope="col">Income</th>
-                <th scope="col">Expense</th>
-                <th scope="col" class="hidden sm:table-cell sm:rounded-tr-lg">Info/Delete</th>
-                <th scope="col" class="sm:hidden">Extra</th>
+              <td></td>
+              <td></td>
+              <td>Total</td>
+              <td class="text-green-500">$<%= totalIncome %></td>
+              <td class="text-red-500">- $<%= totalExpense %></td>
+              <td>= $<%= totalIncome - totalExpense %></td>
             </tr>
-        </thead>
-        <tbody>
-          <% if(!transactions.length) { %>
-            <tr>
-              <td colspan="6">
-                <p class="text-center">No transactions found.</p>
-              </td>
-            </tr>
-          <% } %>
-          <% for(var i=0; i < transactions.length; i++) { %>          
-            <tr>
-              <td><%= transactions[i].date %></td>
-              <td>
-                <a class="link" href="/entities/<%= transactions[i].payeeId %>">
-                  <%= transactions[i].payee %>
-                </a>
-              </td>
-              <td>
-                <a class="link" href="/accounts/<%= transactions[i].accountId %>">
-                  <%= transactions[i].account %>
-                </a>
-              </td>
-              <% if(transactions[i].income) { %>
-                <td class="text-green-500">$<%= transactions[i].income %></td>
-              <% } else { %>
-                <td></td>
-              <% } %>
-              <% if(transactions[i].expense) { %>
-                <td class="text-red-500">- $<%= transactions[i].expense %></td>
-              <% } else { %>
-                <td></td>
-              <% } %>
-              <td class="flex gap-x-2">
-                <a href="/transactions/<%= transactions[i]._id %>">
-                  <button class="btn btn-primary btn-xs fa-solid fa-ellipsis" value="transaction-details"><span class=sr-only>Details</span></button>
-                </a>
-                <form action="/transactions/delete/<%= transactions[i]._id %>?_method=DELETE" method="POST">
-                  <button class="btn btn-error btn-xs fa fa-trash" type="submit" value="delete-transaction"><span class=sr-only>Delete</span></button>
-                </form>
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td></td>
-            <td></td>
-            <td>Total</td>
-            <td class="text-green-500">$<%= totalIncome %></td>
-            <td class="text-red-500">- $<%= totalExpense %></td>
-            <td>= $<%= totalIncome - totalExpense %></td>
-          </tr>
-        </tfoot>
-      </table>        
-    </section>
+          </tfoot>
+        </table>        
+      </section>
+    <!-- </div> -->
+
   </main>  
 <%- include('partials/footer') -%>

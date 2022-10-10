@@ -1,75 +1,76 @@
 <%- include('partials/header') -%> 
   <main class="sm:container mx-auto">
-    <header>
-      <h1 class="page-title">Dashboard</h1>
-      <h2 class="table-title">Quick Navigation</h2>
-    </header>
-    <section class="flex flex-wrap gap-4">
-      <div class="">
-        <a href="/transactions" class="btn btn-accent">Add Transaction</a>
-      </div>
-      <div class="">
-        <a href="/entities" class="btn btn-accent">Add Entity</a>
-      </div>
-      <div class="">
-        <a href="/accounts" class="btn btn-accent">Add Account</a>
-      </div>
-    </section>
-    <header>
-      <h1 class="page-title">Transactions</h1>
-      <h2 class="table-title">Filters</h2>
-    </header>
-    <section class="flex flex-wrap gap-4">
-      <form action="/dashboard" method="POST" class="">
-        <input type="text" class="hidden" value="true" name="filterLast30" />
-        <button class="btn btn-accent" type="submit" value="last-30">Last 30 days</button>
-      </form>
-      <form action="/dashboard" method="POST" class="">
-        <input type="text" class="hidden" value="true" name="filterLastYear" />
-        <button class="btn btn-accent" type="submit" value="last-year">This Time Last Year</button>
-      </form>
-      <form action="/dashboard" method="GET" class="">
-        <button class="btn btn-accent" type="submit" value="all">All</button>
-      </form>
-      <div class="collapse"> <!-- Filters collapsible section -->
-        <input type="checkbox" />
-        <button class="collapse-title btn btn-primary w-36 min-h-0 m-0 p-0">
-          Custom Filter
-        </button>
-        <div class="collapse-content">          
-          <form action="/dashboard" method="POST"> <!-- Filter form -->
-            <div class="grid grid-cols-12 gap-4">
-              <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
-              <div class="col-span-9 flex my-2"> <!-- Filter by date -->
-                <div class="form-control mr-4">
-                  <label for="filterDateRangeStart" class="label">
-                    <span class="label-text">Start Date</span>
-                  </label>
-                  <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
-                </div>
-                <div class="form-control">
-                  <label for="filterDateRangeEnd" class="label">
-                    <span class="label-text">End Date</span>
-                  </label>
-                  <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
+    <div class="main-card">
+      <header>
+        <h1 class="page-title">Dashboard</h1>
+        <h2 class="table-title">Quick Navigation</h2>
+      </header>
+      <section class="flex flex-wrap gap-4 justify-between">
+        <div class="">
+          <a href="/transactions" class="btn btn-accent">Add Transaction</a>
+        </div>
+        <div class="">
+          <a href="/entities" class="btn btn-accent">Add Entity</a>
+        </div>
+        <div class="">
+          <a href="/accounts" class="btn btn-accent">Add Account</a>
+        </div>
+      </section>
+    </div>
+
+      <header class="sm:mx-8">
+        <h2 class="page-title text-base-100">Transactions</h2>
+        <h3 class="table-title text-base-100 mb-0">Summary</h3>
+      </header>
+      <section class="flex flex-wrap gap-4 sm:mx-8">
+        <form action="/dashboard" method="GET" class="">
+          <button class="btn btn-accent" type="submit" value="all">All</button>
+        </form>
+        <form action="/dashboard" method="POST" class="">
+          <input type="text" class="hidden" value="true" name="filterLast30" />
+          <button class="btn btn-accent" type="submit" value="last-30">Last 30 days</button>
+        </form>
+        <form action="/dashboard" method="POST" class="">
+          <input type="text" class="hidden" value="true" name="filterLastYear" />
+          <button class="btn btn-accent" type="submit" value="last-year">This Time Last Year</button>
+        </form>
+        <div class="collapse"> <!-- Filters collapsible section -->
+          <input type="checkbox" class="min-h-0 w-36" />
+          <button class="btn-filter-sort mx-0 mt-0">
+            Custom Filter
+          </button>
+          <div class="collapse-content bg-base-100 card">          
+            <form action="/dashboard" method="POST"> <!-- Filter form -->
+              <div class="grid grid-cols-12 gap-4">
+                <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
+                <div class="col-span-9 flex my-2"> <!-- Filter by date -->
+                  <div class="form-control mr-4">
+                    <label for="filterDateRangeStart" class="label">
+                      <span class="label-text">Start Date</span>
+                    </label>
+                    <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
+                  </div>
+                  <div class="form-control">
+                    <label for="filterDateRangeEnd" class="label">
+                      <span class="label-text">End Date</span>
+                    </label>
+                    <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex justify-center mt-4">
-              <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
-            </div>      
-          </form> <!-- End filter form-->
-        </div>
-      </div> <!-- End collapsible section -->
-    </section>
-    <header>
-      <h1 class="page-title">Transactions</h1>
-      <h2 class="table-title">Summary</h2>
-    </header>
-    <section class="overflow-x-auto grid grid-cols-12 gap-4">
+              <div class="flex justify-center mt-4">
+                <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
+              </div>      
+            </form> <!-- End filter form-->
+          </div>
+        </div> <!-- End collapsible section -->
+      </section>
 
-      <div class="col-span-12 sm:col-span-6">
-        <h3 class="text-xl">Payee</h3>
+
+    <section class="overflow-x-auto grid grid-cols-12 gap-4">
+      <div class="col-span-12 lg:col-span-6">
+        <h2 class="page-title mx-4 sm:mx-12 text-base-100">Transactions by</h2>
+        <h3 class="section-title mx-0 sm:mx-8 mb-4 text-base-100">Payee</h3>
         <table class="table table-compact w-full">
           <thead>
               <tr>
@@ -110,8 +111,9 @@
           </tfoot>
         </table>
       </div>
-      <div class="col-span-12 sm:col-span-6">
-        <h3 class="text-xl">Account</h3>
+      <div class="col-span-12 lg:col-span-6">
+        <h2 class="page-title mx-12 text-base-100">Transactions by</h2>
+        <h3 class="section-title mx-8 mb-4 text-base-100">Account</h3>
         <table class="table table-compact w-full">
           <thead>
               <tr>
