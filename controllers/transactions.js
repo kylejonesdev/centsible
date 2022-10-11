@@ -89,46 +89,62 @@ module.exports = {
       const createExampleEntities = async (req, res) => {
         await Entity.insertMany([
             {
-            name: "Examply Exampleton",
-            street: "123 Some St.",
-            city: "Cityton",
-            state: "Stateland",
-            country: "COU",
-            zip: "12345",
-            phone: "303-825-2525",
-            email: "ex@example.com",
-            notes: "The best of examples.",
-            user: req.user._id,
+              name: "Bobbert Inc.",
+              street: "123 Some St.",
+              city: "Cityton",
+              state: "Stateland",
+              country: "COU",
+              zip: "12345",
+              phone: "303-404-5050",
+              email: "ex@example.com",
+              notes: "Supplying all our widget needs.",
+              user: req.user._id,
             },
             {
-            name: "Isaac Asimov",
-            street: "123 Robot St.",
-            city: "Scifiton",
-            state: "Futureland",
-            country: "USA",
-            zip: "00101",
-            phone: "010-100-1001",
-            email: "sci@books.com",
-            notes: "Good books.",
-            user: req.user._id,
+              name: "ACME LLC",
+              street: "123 Robot St.",
+              city: "Happyville",
+              state: "CA",
+              country: "USA",
+              zip: "00101",
+              phone: "010-100-1001",
+              email: "customerservice@acme.com",
+              notes: "Cartoon hammers and portable holes.",
+              user: req.user._id,
+            },
+            {
+              name: "Loblaw Law",
+              street: "980 Book St.",
+              city: "Legality",
+              state: "DE",
+              country: "USA",
+              zip: "64756",
+              phone: "743-012-6747",
+              email: "help@loblaw.com",
+              notes: "Legal consultation and contract negotiation.",
+              user: req.user._id,
             }
         ]);
       };
       const createExampleAccounts = async (req, res) => {
         await Account.insertMany([
             {
-            name: "Cash",
-            number: "0001",
-            type: "Income",
-            description: "Cash received.",
-            user: req.user.id,
+              name: "Cash",
+              number: "001",
+              description: "Liquid funds.",
+              user: req.user.id,
             },
             {
-            name: "Office Supplies",
-            number: "0002",
-            type: "Expense",
-            description: "Envelopes, pens, and stamps.",
-            user: req.user.id,
+              name: "Office Supplies",
+              number: "002",
+              description: "Envelopes, pens, and stamps.",
+              user: req.user.id,
+            },
+            {
+              name: "Wages",
+              number: "003",
+              description: "Paying employees is good business.",
+              user: req.user.id,
             }
         ]);
       };
@@ -136,12 +152,11 @@ module.exports = {
           // await Transaction.insertMany([
           //     {
           //     user: req.user.id,
-          //     payor: {
+          //     payee: {
           //         [
           //             Entity.find({ name: "Examply Exampleton"}).id]
           //     }
-          //     payee: req.body.payee,
-          //     date: req.body.date,
+          //     date: new Date(),
           //     account: req.body.account,
           //     amount: req.body.amount,
           //     description: req.body.description,

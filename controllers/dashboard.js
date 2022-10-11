@@ -9,7 +9,9 @@ module.exports = {
         try {
             //Initialize all filters and sorts to default values
             let filterDateRangeStart = 0;
-            let filterDateRangeEnd =  Date.now();          
+            let filterDateRangeEnd =  Date.now();
+            let payeeSortByAndDirection = { payee: 1 };
+            let accountSortByAndDirection = { account: 1 };
             //Get filter values from client if they are provided
             if(req.body.filterDateRangeStart) {
                 filterDateRangeStart = req.body.filterDateRangeStart;
@@ -17,16 +19,26 @@ module.exports = {
             if(req.body.filterDateRangeEnd) {
                 filterDateRangeEnd = req.body.filterDateRangeEnd;
             }
-            if(req.body.filterQuickDate === 'filterLast30') {
-                filterDateRangeStart = new Date().setDate(new Date().getDate() - 30);
+            if(req.body.filterSortBy || req.body.filterSortDirection) {
+                let payeeSortBy = req.body.filterSortBy;
+                let accountSortBy = req.body.filterSortBy;
+                if (req.body.filterSortBy === 'name') {
+                    payeeSortBy = "payee";
+                    accountSortBy = "account";                        
+                }
+                payeeSortByAndDirection = { [payeeSortBy]: +req.body.filterSortDirection };
+                accountSortByAndDirection = { [accountSortBy]: +req.body.filterSortDirection };
             }
-            if(req.body.filterQuickDate === 'filterLastYear') {
-                let today = new Date();
-                const oneYearAgo = new Date().setFullYear(today.getFullYear() - 1)
-                const oneYearOneMonthAgo = new Date().setFullYear(today.getMonth() - 13);
-                filterDateRangeStart = oneYearOneMonthAgo;
-                filterDateRangeEnd = oneYearAgo;
-            }            
+            // if(req.body.filterQuickDate === 'filterLast30') {
+            //     filterDateRangeStart = new Date().setDate(new Date().getDate() - 30);
+            // }
+            // if(req.body.filterQuickDate === 'filterLastYear') {
+            //     let today = new Date();
+            //     const oneYearAgo = new Date().setFullYear(today.getFullYear() - 1)
+            //     const oneYearOneMonthAgo = new Date().setFullYear(today.getMonth() - 13);
+            //     filterDateRangeStart = oneYearOneMonthAgo;
+            //     filterDateRangeEnd = oneYearAgo;
+            // }            
             const payeeSorted = await Transaction
             .aggregate([
                 {
@@ -48,11 +60,6 @@ module.exports = {
                         ]
                     }
                 },
-                // {
-                //     $sort: {
-                //         total: -1
-                //     }
-                // },
                 {
                     $lookup: {
                         from: "entities",
@@ -86,6 +93,9 @@ module.exports = {
                         }
                     }                        
                 },
+                {
+                    $sort: payeeSortByAndDirection
+                },
             ]);
             const accountSorted = await Transaction
             .aggregate([
@@ -108,11 +118,6 @@ module.exports = {
                         ]
                     }
                 },
-                // {
-                //     $sort: {
-                //         total: -1
-                //     }
-                // },
                 {
                     $lookup: {
                         from: "accounts",
@@ -145,6 +150,9 @@ module.exports = {
                             $sum: "$expense"
                         }
                     }                        
+                },
+                {
+                    $sort: accountSortByAndDirection
                 },
             ]);
             const calculateTotal = (arr, transactionField) => {
