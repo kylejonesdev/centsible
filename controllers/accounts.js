@@ -36,10 +36,10 @@ module.exports = {
                     sortOrder = { payee: 1 }
                     break;
                 case 'income':
-                    sortOrder = { amount: -1 }
+                    sortOrder = { income: -1 }
                     break;
                 case 'expense':
-                    sortOrder = { amount: -1 }
+                    sortOrder = { expense: -1 }
                     break;
                 default:
                     sortOrder = { date: -1 }
@@ -89,6 +89,9 @@ module.exports = {
                     income: "$income",
                     expense: "$expense",
                   }
+                },
+                {
+                    $sort: sortOrder,
                 },
             ]);
             const calculateTotal = (arr, transactionField) => {

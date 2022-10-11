@@ -1,157 +1,170 @@
 <%- include('partials/header') -%> 
   <main class="sm:container mx-auto">
-    <header>
-      <h1 class="page-title">Dashboard</h1>
-      <h2 class="table-title">Quick Navigation</h2>
-    </header>
-    <section class="flex flex-wrap gap-4">
-      <div class="">
-        <a href="/transactions" class="btn btn-accent">Add Transaction</a>
-      </div>
-      <div class="">
-        <a href="/entities" class="btn btn-accent">Add Entity</a>
-      </div>
-      <div class="">
-        <a href="/accounts" class="btn btn-accent">Add Account</a>
-      </div>
-    </section>
-    <header>
-      <h1 class="page-title">Transactions</h1>
-      <h2 class="table-title">Filters</h2>
-    </header>
-    <section class="flex flex-wrap gap-4">
-      <form action="/dashboard" method="POST" class="">
-        <input type="text" class="hidden" value="true" name="filterLast30" />
-        <button class="btn btn-accent" type="submit" value="last-30">Last 30 days</button>
-      </form>
-      <form action="/dashboard" method="POST" class="">
-        <input type="text" class="hidden" value="true" name="filterLastYear" />
-        <button class="btn btn-accent" type="submit" value="last-year">This Time Last Year</button>
-      </form>
-      <form action="/dashboard" method="GET" class="">
-        <button class="btn btn-accent" type="submit" value="all">All</button>
-      </form>
-      <div class="collapse"> <!-- Filters collapsible section -->
-        <input type="checkbox" />
-        <button class="collapse-title btn btn-primary w-36 min-h-0 m-0 p-0">
-          Custom Filter
-        </button>
-        <div class="collapse-content">          
-          <form action="/dashboard" method="POST"> <!-- Filter form -->
-            <div class="grid grid-cols-12 gap-4">
-              <h3 class="col-span-3 self-center text-xl">Filter Date Range</h3>
-              <div class="col-span-9 flex my-2"> <!-- Filter by date -->
-                <div class="form-control mr-4">
-                  <label for="filterDateRangeStart" class="label">
-                    <span class="label-text">Start Date</span>
-                  </label>
-                  <input id="filterDateRangeStart" type="date" class="input input-bordered" name="filterDateRangeStart">
-                </div>
-                <div class="form-control">
-                  <label for="filterDateRangeEnd" class="label">
-                    <span class="label-text">End Date</span>
-                  </label>
-                  <input id="filterDateRangeEnd" type="date" class="input input-bordered" name="filterDateRangeEnd">
-                </div>
-              </div>
-            </div>
-            <div class="flex justify-center mt-4">
-              <button id="apply-filters" class="btn btn-accent" type="submit">Apply</button>   
-            </div>      
-          </form> <!-- End filter form-->
+    <!-- <div class="main-card">
+      <header>
+        <h1 class="page-title">Dashboard</h1>
+        <h2 class="table-title">Quick Navigation</h2>
+      </header>
+      <section class="flex flex-wrap gap-4 justify-between">
+        <div class="">
+          <a href="/transactions" class="btn btn-accent">Add Transaction</a>
         </div>
-      </div> <!-- End collapsible section -->
-    </section>
-    <header>
-      <h1 class="page-title">Transactions</h1>
-      <h2 class="table-title">Summary</h2>
-    </header>
-    <section class="overflow-x-auto grid grid-cols-12 gap-4">
-
-      <div class="col-span-12 sm:col-span-6">
-        <h3 class="text-xl">Payee</h3>
-        <table class="table table-compact w-full">
-          <thead>
+        <div class="">
+          <a href="/entities" class="btn btn-accent">Add Entity</a>
+        </div>
+        <div class="">
+          <a href="/accounts" class="btn btn-accent">Add Account</a>
+        </div>
+      </section>
+    </div> -->
+    <div class="filter-row">
+      <header class="self-center">
+        <h1 class="filter-row-title">Dashboard</h1>
+      </header>
+      <section class="w-full lg:w-auto self-center">
+        <form action="/dashboard" method="POST" class="flex flex-wrap justify-end gap-x-2 mx-4 sm:mx-0">
+          <!-- <div class="form-control">
+            <label for="filterQuickDate" class="label">
+              <span class="label-text">Quick Date Range</span>
+            </label>
+            <select id="filterQuickDate" name="filterQuickDate" class="select select-ghost select-xs max-w-xs" onchange="this.form.submit()">
+              <option value=""></option>
+              <option value="filterLastYear" >One year ago</option>
+              <option value="filterLast30" >Last 30 days</option>
+            </select>
+          </div> -->
+          <div class="form-control">
+            <label for="filterSortBy" class="label">
+              <span class="label-text">Sort By</span>
+            </label>
+            <select id="filterSortBy" name="filterSortBy" class="select select-ghost select-xs max-w-xs">
+              <option value=""></option>
+              <option value="name">Name</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+              <!-- <option value="net">Net</option> -->
+            </select>
+          </div>
+          <div class="form-control">
+            <label for="filterSortDirection" class="label">
+              <span class="label-text">Direction</span>
+            </label>
+            <select id="filterSortDirection" name="filterSortDirection" class="select select-ghost select-xs max-w-xs">
+              <option value=""></option>
+              <option value="-1">Descending</option>
+              <option value="1">Ascending</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label for="filterDateRangeStart" class="label">
+              <span class="label-text">Start Date</span>
+            </label>
+            <input id="filterDateRangeStart" type="date" class="input input-ghost input-xs" name="filterDateRangeStart" value="<%= filterDateRangeStart %>">
+          </div>
+          <div class="form-control">
+            <label for="filterDateRangeEnd" class="label">
+              <span class="label-text">End Date</span>
+            </label>
+            <input id="filterDateRangeEnd" type="date" class="input input-ghost input-xs" name="filterDateRangeEnd"  value="<%= filterDateRangeEnd %>">
+          </div>
+          <button class="btn btn-accent btn-sm self-center" type="submit">Apply</button>
+          <a href="/dashboard" class="btn btn-outline btn-primary btn-sm self-center">Clear</a>
+        </form>
+      </section>
+    </div>
+    <div class="grid grid-cols-12 gap-x-4">
+      <div class="col-span-12 lg:col-span-6 main-card">
+        <header>
+          <h2 class="table-title">Transactions by Payee</h2>
+        </header>
+        <section class="overflow-x-auto ">
+          <table class="table table-compact w-full">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col" class="text-right">Income</th>
+                    <th scope="col" class="text-right">Expense</th>
+                    <th scope="col" class="text-right">Net</th>
+                </tr>
+            </thead>
+            <tbody>
+              <% if(!payeeSorted.length) { %>
+                <tr>
+                  <td colspan="6">
+                    <p class="text-center">No transactions found.</p>
+                  </td>
+                </tr>
+              <% } %>
+              <% for(var i=0; i < payeeSorted.length; i++) { %>          
+                <tr>
+                  <td>
+                    <a class="link" href="/entities/<%= payeeSorted[i]._id %>">
+                      <%= payeeSorted[i].payee %>
+                    </a>
+                  </td>
+                  <td class="text-green-500 text-right">$<%= payeeSorted[i].totalIncome %></td>
+                  <td class="text-red-500 text-right">- $<%= payeeSorted[i].totalExpense %></td>
+                  <td class="text-right">$<%= payeeSorted[i].totalIncome - payeeSorted[i].totalExpense %></td>
+                </tr>
+              <% } %>
+            </tbody>
+            <tfoot>
               <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Income</th>
-                  <th scope="col">Expense</th>
-                  <th scope="col">Net</th>
+                <td class="text-base-content uppercase">Total</td>
+                <td class="text-green-500 text-right">$<%= payeeAllIncome %></td>
+                <td class="text-red-500 text-right">- $<%= payeeAllExpense %></td>
+                <td class="text-base-content text-right">$<%= payeeAllIncome - payeeAllExpense %></td>
               </tr>
-          </thead>
-          <tbody>
-            <% if(!payeeSorted.length) { %>
-              <tr>
-                <td colspan="6">
-                  <p class="text-center">No transactions found.</p>
-                </td>
-              </tr>
-            <% } %>
-            <% for(var i=0; i < payeeSorted.length; i++) { %>          
-              <tr>
-                <td>
-                  <a class="link" href="/entities/<%= payeeSorted[i]._id %>">
-                    <%= payeeSorted[i].payee %>
-                  </a>
-                </td>
-                <td class="text-green-500">$<%= payeeSorted[i].totalIncome %></td>
-                <td class="text-red-500">- $<%= payeeSorted[i].totalExpense %></td>
-                <td>$<%= payeeSorted[i].totalIncome - payeeSorted[i].totalExpense %></td>
-              </tr>
-            <% } %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Total</td>
-              <td class="text-green-500">$<%= payeeAllIncome %></td>
-              <td class="text-red-500">- $<%= payeeAllExpense %></td>
-              <td>$<%= payeeAllIncome - payeeAllExpense %></td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </section>
       </div>
-      <div class="col-span-12 sm:col-span-6">
-        <h3 class="text-xl">Account</h3>
-        <table class="table table-compact w-full">
-          <thead>
+      <div class="col-span-12 lg:col-span-6 main-card">
+        <header>
+          <h2 class="table-title">Transactions by Account</h2>
+        </header>
+        <section class="overflow-x-auto">
+          <table class="table table-compact w-full">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col" class="text-right">Income</th>
+                    <th scope="col" class="text-right">Expense</th>
+                    <th scope="col" class="text-right">Net</th>
+                </tr>
+            </thead>
+            <tbody>
+              <% if(!accountSorted.length) { %>
+                <tr>
+                  <td colspan="6">
+                    <p class="text-center">No transactions found.</p>
+                  </td>
+                </tr>
+              <% } %>
+              <% for(var i=0; i < accountSorted.length; i++) { %>          
+                <tr>
+                  <td>
+                    <a class="link" href="/accounts/<%= accountSorted[i]._id %>">
+                      <%= accountSorted[i].account %>
+                    </a>
+                  </td>
+                  <td class="text-green-500 text-right">$<%= accountSorted[i].totalIncome %></td>
+                  <td class="text-red-500 text-right">- $<%= accountSorted[i].totalExpense %></td>
+                  <td class="text-right">$<%= accountSorted[i].totalIncome - accountSorted[i].totalExpense %></td>
+                </tr>
+              <% } %>
+            </tbody>
+            <tfoot>
               <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Income</th>
-                  <th scope="col">Expense</th>
-                  <th scope="col">Net</th>
+                <td class="text-base-content uppercase">Total</td>
+                <td class="text-green-500 text-right">$<%= accountAllIncome %></td>
+                <td class="text-red-500 text-right">- $<%= accountAllExpense %></td>
+                <td class="text-base-content text-right">$<%= accountAllIncome - accountAllExpense %></td>
               </tr>
-          </thead>
-          <tbody>
-            <% if(!accountSorted.length) { %>
-              <tr>
-                <td colspan="6">
-                  <p class="text-center">No transactions found.</p>
-                </td>
-              </tr>
-            <% } %>
-            <% for(var i=0; i < accountSorted.length; i++) { %>          
-              <tr>
-                <td>
-                  <a class="link" href="/accounts/<%= accountSorted[i]._id %>">
-                    <%= accountSorted[i].account %>
-                  </a>
-                </td>
-                <td class="text-green-500">$<%= accountSorted[i].totalIncome %></td>
-                <td class="text-red-500">- $<%= accountSorted[i].totalExpense %></td>
-                <td>$<%= accountSorted[i].totalIncome - accountSorted[i].totalExpense %></td>
-              </tr>
-            <% } %>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Total</td>
-              <td class="text-green-500">$<%= accountAllIncome %></td>
-              <td class="text-red-500">- $<%= accountAllExpense %></td>
-              <td>$<%= accountAllIncome - accountAllExpense %></td>
-            </tr>
-          </tfoot>
-        </table>
+            </tfoot>
+          </table>
+        </section>
       </div>
-    </section>
+    </div>
   </main>  
 <%- include('partials/footer') -%>

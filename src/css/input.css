@@ -7,25 +7,61 @@
         min-height: 75vh;
     }
     section {
-        @apply mx-1 sm:mx-8 mb-12 mt-4
+        @apply sm:m-4
     }
+    /* table {
+        @apply shadow-lg
+    } */
+    tbody > tr {
+        @apply border-y
+    }
+    /* tfoot > tr {
+        @apply text-gray-400
+    } */
 }
 
 @layer components {
 
     .page-title {
-        @apply text-2xl mx-8 pt-4
+        @apply text-4xl font-semibold m-8
     }
-    .section-title {
+    .filter-row {
+        @apply flex flex-wrap justify-between
+    }
+    .filter-row-title {
+        @apply p-8 font-semibold text-4xl
+    }
+    /* .section-title {
         @apply text-4xl mx-4
+    } */
+    .label-text {
+        @apply font-bold
     }
-    .table-title {
-        @apply text-4xl mx-4 mb-8
+    .main-card {
+        @apply bg-base-100 m-4 p-4 shadow-md rounded-md overflow-x-auto
+    }
+    .main-card .label-text {
+        @apply text-gray-500 font-bold
+    }
+    .btn {
+        @apply shadow-md
     }
     .btn-primary {
-        @apply text-white text-opacity-100
+        @apply text-base-100 text-opacity-100
+    }
+    .btn-filter-sort {
+        @apply collapse-title btn btn-primary w-36 mb-2 mt-8 mx-8 p-0 min-h-0
+    }
+    .table-title {
+        @apply text-lg font-bold m-4
+    }
+    .collapse .table-title {
+        @apply text-4xl mx-8 mt-6 text-base-100 
     }
     .table :where(thead, tfoot) :where(th, td) {
-        @apply bg-primary text-base-100
+        @apply bg-base-100 capitalize text-gray-500
+    }
+    .table th:first-child {
+        position: relative
     }
 }

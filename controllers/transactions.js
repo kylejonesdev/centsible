@@ -89,46 +89,62 @@ module.exports = {
       const createExampleEntities = async (req, res) => {
         await Entity.insertMany([
             {
-            name: "Examply Exampleton",
-            street: "123 Some St.",
-            city: "Cityton",
-            state: "Stateland",
-            country: "COU",
-            zip: "12345",
-            phone: "303-825-2525",
-            email: "ex@example.com",
-            notes: "The best of examples.",
-            user: req.user._id,
+              name: "Bobbert Inc.",
+              street: "123 Some St.",
+              city: "Cityton",
+              state: "Stateland",
+              country: "COU",
+              zip: "12345",
+              phone: "303-404-5050",
+              email: "ex@example.com",
+              notes: "Supplying all our widget needs.",
+              user: req.user._id,
             },
             {
-            name: "Isaac Asimov",
-            street: "123 Robot St.",
-            city: "Scifiton",
-            state: "Futureland",
-            country: "USA",
-            zip: "00101",
-            phone: "010-100-1001",
-            email: "sci@books.com",
-            notes: "Good books.",
-            user: req.user._id,
+              name: "ACME LLC",
+              street: "123 Robot St.",
+              city: "Happyville",
+              state: "CA",
+              country: "USA",
+              zip: "00101",
+              phone: "010-100-1001",
+              email: "customerservice@acme.com",
+              notes: "Cartoon hammers and portable holes.",
+              user: req.user._id,
+            },
+            {
+              name: "Loblaw Law",
+              street: "980 Book St.",
+              city: "Legality",
+              state: "DE",
+              country: "USA",
+              zip: "64756",
+              phone: "743-012-6747",
+              email: "help@loblaw.com",
+              notes: "Legal consultation and contract negotiation.",
+              user: req.user._id,
             }
         ]);
       };
       const createExampleAccounts = async (req, res) => {
         await Account.insertMany([
             {
-            name: "Cash",
-            number: "0001",
-            type: "Income",
-            description: "Cash received.",
-            user: req.user.id,
+              name: "Cash",
+              number: "001",
+              description: "Liquid funds.",
+              user: req.user.id,
             },
             {
-            name: "Office Supplies",
-            number: "0002",
-            type: "Expense",
-            description: "Envelopes, pens, and stamps.",
-            user: req.user.id,
+              name: "Office Supplies",
+              number: "002",
+              description: "Envelopes, pens, and stamps.",
+              user: req.user.id,
+            },
+            {
+              name: "Wages",
+              number: "003",
+              description: "Paying employees is good business.",
+              user: req.user.id,
             }
         ]);
       };
@@ -136,12 +152,11 @@ module.exports = {
           // await Transaction.insertMany([
           //     {
           //     user: req.user.id,
-          //     payor: {
+          //     payee: {
           //         [
           //             Entity.find({ name: "Examply Exampleton"}).id]
           //     }
-          //     payee: req.body.payee,
-          //     date: req.body.date,
+          //     date: new Date(),
           //     account: req.body.account,
           //     amount: req.body.amount,
           //     description: req.body.description,
@@ -175,7 +190,16 @@ module.exports = {
         createExampleAccounts(req);
       }
       console.log(transactions);
-      res.render("transactions.ejs", {transactions: transactions, totalIncome: calculateTotal(transactions, "income"), totalExpense: calculateTotal(transactions, "expense"), entities: entities, accounts: accounts, user: req.user});
+      res.render("transactions.ejs", {
+        transactions: transactions, 
+        totalIncome: calculateTotal(transactions, "income"), 
+        totalExpense: calculateTotal(transactions, "expense"), 
+        entities: entities, 
+        accounts: accounts,
+        filterQuickDate: req.body.filterQuickDate,
+        filterDateRangeStart: filterDateRangeStart,
+        filterDateRangeEnd: filterDateRangeEnd,
+        user: req.user});
     } catch(err) {
       console.error(err);
     }
@@ -233,11 +257,14 @@ module.exports = {
             accountId: "$account._id",
             income: "$income",
             expense: "$expense",
+            description: "$description",
+            imageId: "$imageId",
+            imageURL: "$imageURL"
           }
         },
       ]);
-      const entities = await Entity.find();
-      const accounts = await Account.find();
+      const entities = await Entity.find({ user:req.user.id });
+      const accounts = await Account.find({ user:req.user.id });
       console.log(transaction[0]);
       res.render("transaction.ejs", { transaction: transaction[0], entities: entities, accounts: accounts, user: req.user });
     } catch (err) {
@@ -269,12 +296,12 @@ module.exports = {
         //Create Transaction
         let incomeAmount = 0;
         let expenseAmount = 0;    
-        if(req.body.type === "Income") {
+        if(req.body.type === "Income") { //put user provided amount in correct field
           incomeAmount = req.body.amount;
         } else if (req.body.type === "Expense") {
           expenseAmount = req.body.amount;
         }
-        if(req.file !== undefined) {
+        if(req.file !== undefined) { //if documentation file is attached
           const cloudinaryResult = await cloudinary.uploader.upload(req.file.path); // Upload image to cloudinary
           await Transaction.create({
             user: req.user.id,
@@ -289,7 +316,7 @@ module.exports = {
             imageURL: cloudinaryResult.secure_url,
           });
           console.log(`Add transaction for user ${req.user.id}. Cloudinary image ID: ${cloudinaryResult.public_id}.`)
-        } else {
+        } else { //if no documentation is found
           await Transaction.create({
             user: req.user.id,
             date: req.body.date,
@@ -317,7 +344,7 @@ module.exports = {
       } else if (req.body.type === "Expense") {
         expenseAmount = req.body.amount;
       }
-      if(req.file !== undefined) {
+      if(req.file !== undefined) { //if transaction has an attached document
         const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
         await Transaction.findOneAndUpdate(
           { _id: req.params.id },
@@ -335,7 +362,7 @@ module.exports = {
             imageURL: cloudinaryResult.secure_url,  
           }
         );
-      } else {
+      } else { //if there is no document attached
         await Transaction.findOneAndUpdate(
           { _id: req.params.id },
           {
@@ -351,8 +378,7 @@ module.exports = {
           }
         );
       }
-      console.log(req.params.id);
-      console.log("Transaction updated.");
+      console.log("Updated transaction: " + req.params.id);
       res.redirect(`/transactions/${req.params.id}`);
     } catch (err) {
       console.error(err);

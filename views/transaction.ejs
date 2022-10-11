@@ -1,11 +1,11 @@
 <%- include('partials/header') -%>
-  <main class="container mx-auto">
-    <header>
+  <main class="sm:container mx-auto">
+    <header class="ml-4">
       <h1 class="page-title">Transaction Details</h2>
-      <h2 class="section-title">Single Transaction</h2>
-      <small class="mx-8">Transaction ID: <%= transaction._id %></small>   
+       
     </header>
-    <section class="m-8 overflow-x-auto">
+    <section class="main-card overflow-x-auto">
+      <h2 class="table-title">Transaction</h2>  
       <table class="table table-compact w-full">
         <thead>
           <tr>
@@ -35,88 +35,83 @@
                 <%= transaction.type %>
             </td>     
             <% if(transaction.income) { %>
-              <td class="text-green-500">$<%= transaction.income %></td>
+              <td class="text-green-500 font-bold">$<%= transaction.income %></td>
             <% } else { %>
-              <td class="text-red-500">- $<%= transaction.expense %></td>
+              <td class="text-red-500 font-bold">- $<%= transaction.expense %></td>
             <% } %>
           </tr>
         </tbody>
       </table>
     </section>
-    <header>
-      <h2 class="section-title">Update Transaction</h2>
-    </header>
-    <section>
-      <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/update/<%= transaction._id %>?_method=PUT" enctype="multipart/form-data" method="POST">
-          <div class="form-control col-span-12 md:col-span-6">
-            <label for="payee" class="label">
-              <span class="label-text">Payee</span>
-            </label>
-            <div class="input-group">
-              <select class="select select-bordered w-5/6 md:w-2/3" id="payee" name="payee">
-                <option value="<%= transaction.payeeId %>"><%= transaction.payee %></option>
-                <% for(let i = 0; i < entities.length; i++) {
-                  if(entities[i].name !== transaction.payee) { %> 
-                    <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
-                  <% } %>
-                <% } %>
-              </select>
-              <a class="btn btn-primary w-1/6 md:w-1/3" href="/entities" class="pl-2">Add</a>
-            </div>
-          </div>
-          <div class="form-control col-span-12 md:col-span-2 justify-end">
-            <label class="label cursor-pointer">
-              <span class="label-text">Income</span>
-              <% if(transaction.type === 'Income') { %>
-                <input type="radio" name="type" class="radio checked:bg-green-500" value="Income" checked/>
-              <% } else { %>
-                <input type="radio" name="type" class="radio checked:bg-green-500" value="Income"/>
-              <% } %>
-            </label>
-          </div>
-          <div class="form-control col-span-12 md:col-span-2 justify-end">
-            <label class="label cursor-pointer">              
-              <span class="label-text">Expense</span>
-              <% if(transaction.type === 'Expense') { %>
-                <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense" checked/>
-              <% } else { %>
-                <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense"/>
-              <% } %>
-            </label>
-          </div>
-          <div class="form-control col-span-12 md:col-span-6">
-            <label for="account" class="label">
-              <span class="label-text">Account</span>
-            </label>
-            <div class="input-group">
-              <select class="select select-bordered w-5/6 md:w-2/3" id="account" name="account">
-                <option value="<%= transaction.accountId %>"><%= transaction.account %></option>
-                <% for(let i = 0; i < accounts.length; i++) { 
-                  if(accounts[i].name !== transaction.account) { %>                
-                    <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
-                  <% } %>
-                <% } %>
-              </select>
-              <a class="btn btn-primary w-1/6 md:w-1/3" href="/accounts" class="pl-2">Add</a>
-            </div>
-          </div>
-          <div class="form-control col-span-6 md:col-span-3">
+    <div class="m-4 main-card">
+      <header>
+        <h2 class="table-title">Update Transaction</h2>
+      </header>
+      <section>
+        <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/update/<%= transaction._id %>?_method=PUT" enctype="multipart/form-data" method="POST">
+          <div class="form-control col-span-6 md:col-span-4">
             <label for="date" class="label">
               <span class="label-text">Date</span>
             </label>
-            <input id="date" class="input input-bordered" type="date" name="date" value="<%= transaction.date %>">
+            <input id="date" class="input input-bordered input-sm" type="date" name="date" value="<%= transaction.date %>">
           </div>
-          <div class="form-control col-span-6 md:col-span-3">
+          <div class="form-control col-span-6 md:col-span-4">
+            <label for="payee" class="label justify-start">
+              <span class="label-text">Payee</span>
+              <a href="/entities" class="px-2 fa fa-circle-plus fa-xl text-primary"><span class="sr-only">Add New</span></a> 
+            </label>
+            <select class="select select-bordered select-sm" id="payee" name="payee">
+              <option value="<%= transaction.payeeId %>"><%= transaction.payee %></option>
+              <% for(let i = 0; i < entities.length; i++) { %>
+                <option value="<%= entities[i]._id %>"><%= entities[i].name %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="form-control col-span-6 md:col-span-4">
+            <label for="account" class="label justify-start">
+              <span class="label-text">Account</span>
+              <a href="/accounts" class="px-2 fa fa-circle-plus fa-xl text-primary"><span class="sr-only">Add New</span></a> 
+            </label>
+            <select class="select select-bordered select-sm" id="account" name="account">
+              <option value="<%= transaction.accountId %>"><%= transaction.account %></option>
+              <% for(let i = 0; i < accounts.length; i++) { %>
+                <option value="<%= accounts[i]._id %>"><%= accounts[i].name %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="form-control col-span-6 md:col-span-4">
             <label for="amount" class="label">
               <span class="label-text">Amount</span>
             </label>
-            <div class="input-group grid grid-cols-4">
-              <span class="justify-center font-semibold bg-primary text-base-100">$</span>
+            <div class="input-group grid grid-cols-5">
+              <span class="justify-center font-semibold bg-base-200 text-inherit">$</span>
               <% if(transaction.income) { %>
-                <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.income %>">
+                <input id="amount" class="input input-bordered input-sm col-span-4" type="number" name="amount" value="<%= transaction.income %>">
               <% } else { %>
-                <input id="amount" class="input input-bordered col-span-3" type="number" name="amount" value="<%= transaction.expense %>">
+                <input id="amount" class="input input-bordered input-sm col-span-4" type="number" name="amount" value="<%= transaction.expense %>">
               <% } %>
+            </div>
+          </div>
+          <div class="col-span-12 md:col-span-4 flex justify-start md:justify-around items-end gap-x-2">
+            <div class="form-control">
+              <label class="label cursor-pointer">
+                <span class="label-text mr-2">Income</span>
+                <% if(transaction.type === 'Income') { %>
+                  <input type="radio" name="type" class="radio checked:bg-green-500" value="Income" checked/>
+                <% } else { %>
+                  <input type="radio" name="type" class="radio checked:bg-green-500" value="Income"/>
+                <% } %>
+              </label>
+            </div>
+            <div class="form-control col-span-12 md:col-span-2 justify-end">
+              <label class="label cursor-pointer">              
+                <span class="label-text mr-2">Expense</span>
+                <% if(transaction.type === 'Expense') { %>
+                  <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense" checked/>
+                <% } else { %>
+                  <input type="radio" name="type" class="radio checked:bg-red-500" value="Expense"/>
+                <% } %>
+              </label>
             </div>
           </div>
           <div class="form-control col-span-12 sm:col-span-6 sm:row-span-2">
@@ -136,7 +131,7 @@
                 </div>
               <% } else { %>
               <a href="<%= transaction.imageURL %>">
-                <img class="border rounded-lg max-w-sm mx-auto" src="<%= transaction.imageURL %>">
+                <img class="border rounded-lg mx-auto" src="<%= transaction.imageURL %>">
               </a>
               <% } %>
             </div>
@@ -150,11 +145,11 @@
           <div class="col-span-12 flex justify-center my-4">
             <button id="update-transaction" class="btn btn-accent" type="submit">Update Transaction</button>            
           </div>
+        </form>
+        <div class="flex justify-center">
+          <input class="btn btn-outline btn-secondary" name="action" onclick="history.back()" type="submit" value="Back"/>
         </div>
-      </form>
-      <div class="flex justify-center">
-        <input class="btn btn-outline btn-secondary" name="action" onclick="history.back()" type="submit" value="Back"/>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>  
 <%- include('partials/footer') -%>
