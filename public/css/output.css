@@ -3597,6 +3597,10 @@ tbody > tr {
     display: none;
   }
 
+  .lg\:w-auto {
+    width: auto;
+  }
+
   .lg\:grid-flow-col {
     grid-auto-flow: column;
   }

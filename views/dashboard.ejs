@@ -21,7 +21,7 @@
       <header class="self-center">
         <h1 class="filter-row-title">Dashboard</h1>
       </header>
-      <section class="w-full md:w-auto self-center">
+      <section class="w-full lg:w-auto self-center">
         <form action="/dashboard" method="POST" class="flex flex-wrap justify-end gap-x-2 mx-4 sm:mx-0">
           <!-- <div class="form-control">
             <label for="filterQuickDate" class="label">
@@ -33,6 +33,28 @@
               <option value="filterLast30" >Last 30 days</option>
             </select>
           </div> -->
+          <div class="form-control">
+            <label for="filterSortBy" class="label">
+              <span class="label-text">Sort By</span>
+            </label>
+            <select id="filterSortBy" name="filterSortBy" class="select select-ghost select-xs max-w-xs">
+              <option value=""></option>
+              <option value="name">Name</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+              <!-- <option value="net">Net</option> -->
+            </select>
+          </div>
+          <div class="form-control">
+            <label for="filterSortDirection" class="label">
+              <span class="label-text">Direction</span>
+            </label>
+            <select id="filterSortDirection" name="filterSortDirection" class="select select-ghost select-xs max-w-xs">
+              <option value=""></option>
+              <option value="-1">Descending</option>
+              <option value="1">Ascending</option>
+            </select>
+          </div>
           <div class="form-control">
             <label for="filterDateRangeStart" class="label">
               <span class="label-text">Start Date</span>
@@ -82,7 +104,7 @@
                   </td>
                   <td class="text-green-500 text-right">$<%= payeeSorted[i].totalIncome %></td>
                   <td class="text-red-500 text-right">- $<%= payeeSorted[i].totalExpense %></td>
-                  <td class="text-right"><span class="bottom-0">$</span><span class="ml-1"><%= payeeSorted[i].totalIncome - payeeSorted[i].totalExpense %></span></td>
+                  <td class="text-right">$<%= payeeSorted[i].totalIncome - payeeSorted[i].totalExpense %></td>
                 </tr>
               <% } %>
             </tbody>
