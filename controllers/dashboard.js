@@ -17,10 +17,10 @@ module.exports = {
             if(req.body.filterDateRangeEnd) {
                 filterDateRangeEnd = req.body.filterDateRangeEnd;
             }
-            if(req.body.filterLast30) {
+            if(req.body.filterQuickDate === 'filterLast30') {
                 filterDateRangeStart = new Date().setDate(new Date().getDate() - 30);
             }
-            if(req.body.filterLastYear) {
+            if(req.body.filterQuickDate === 'filterLastYear') {
                 let today = new Date();
                 const oneYearAgo = new Date().setFullYear(today.getFullYear() - 1)
                 const oneYearOneMonthAgo = new Date().setFullYear(today.getMonth() - 13);
@@ -147,57 +147,6 @@ module.exports = {
                     }                        
                 },
             ]);
-            const accountSorted2 = await Transaction
-            .aggregate([
-                {
-                $match: {
-                    $and: [
-                    {
-                        user: new mongoose.Types.ObjectId(req.user.id)
-                    },
-                    {
-                        date: {
-                        $gte: new Date(filterDateRangeStart)
-                        }
-                    },
-                    {
-                        date: {
-                        $lte: new Date(filterDateRangeEnd)
-                        }
-                    }
-                    ]
-                } 
-                },
-                {
-                    $group: {
-                        _id:  "$account",
-                        total: { $sum: "$amount" }
-                    }         
-                },
-                {
-                    $sort: {
-                        total: -1
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "accounts",
-                        localField: "_id",
-                        foreignField: "_id",
-                        as: "account"
-                    }
-                },
-                {
-                    $unwind: "$account"
-                },
-                {
-                    $project: {
-                        account: "$account.name",
-                        type: "$type",
-                        total: "$total",
-                    }
-                },
-            ]);
             const calculateTotal = (arr, transactionField) => {
                 return arr.reduce((acc, item) => {
                   return acc + item[transactionField]
@@ -212,6 +161,9 @@ module.exports = {
                 accountSorted: accountSorted,
                 accountAllIncome: calculateTotal(accountSorted, "totalIncome"),
                 accountAllExpense: calculateTotal(accountSorted, "totalExpense"),
+                //filterQuickDate: req.body.filterQuickDate,
+                filterDateRangeStart: filterDateRangeStart,
+                filterDateRangeEnd: filterDateRangeEnd,
                 user: req.user 
             });
         } catch(err) {

@@ -29,10 +29,10 @@ module.exports = {
                   sortOrder = { type: 1 }
                   break;
                 case 'income':
-                  sortOrder = { amount: -1 }
+                  sortOrder = { income: -1 }
                   break;
                 case 'expense':
-                  sortOrder = { amount: -1 }
+                  sortOrder = { expense: -1 }
                   break;
                 default:
                   sortOrder = { date: -1 }
@@ -148,12 +148,12 @@ module.exports = {
             const relatedTransactions = await Transaction
             .findOne(
                 { 
-                    $or: [{payor: req.params.id }, { payee: req.params.id }] 
+                  payee: req.params.id
                 }
             );
             const errorMessages = [];
             if(relatedTransactions) {
-                errorMessages.push({ msg: "You cannot delete an entity if it is a payor or payee on a transaction."});
+                errorMessages.push({ msg: "You cannot delete an entity if it is a payee on a transaction."});
             }
             if (errorMessages.length) {
                 console.log(errorMessages);

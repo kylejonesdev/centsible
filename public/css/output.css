@@ -2564,6 +2564,16 @@ tbody > tr {
   width: 12rem;
 }
 
+.w-0 {
+  width: 0px;
+}
+
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .max-w-xs {
   max-width: 20rem;
 }
