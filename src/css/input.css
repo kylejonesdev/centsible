@@ -64,4 +64,7 @@
     .table th:first-child {
         position: relative
     }
+    #login-logo {
+        @apply w-10 h-10 mr-2 sm:w-20 sm:h-20 sm:mr-4
+    }
 }
