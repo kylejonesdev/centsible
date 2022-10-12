@@ -48,14 +48,14 @@
         <h2 class="table-title">Update Transaction</h2>
       </header>
       <section>
-        <form class="grid grid-cols-12 gap-x-8 gap-y-2" action="/transactions/update/<%= transaction._id %>?_method=PUT" enctype="multipart/form-data" method="POST">
-          <div class="form-control col-span-6 md:col-span-4">
+        <form class="grid grid-cols-12 gap-x-4 gap-y-2" action="/transactions/update/<%= transaction._id %>?_method=PUT" enctype="multipart/form-data" method="POST">
+          <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
             <label for="date" class="label">
               <span class="label-text">Date</span>
             </label>
             <input id="date" class="input input-bordered input-sm" type="date" name="date" value="<%= transaction.date %>">
           </div>
-          <div class="form-control col-span-6 md:col-span-4">
+          <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
             <label for="payee" class="label justify-start">
               <span class="label-text">Payee</span>
               <a href="/entities" class="px-2 fa fa-circle-plus fa-xl text-primary"><span class="sr-only">Add New</span></a> 
@@ -67,7 +67,7 @@
               <% } %>
             </select>
           </div>
-          <div class="form-control col-span-6 md:col-span-4">
+          <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
             <label for="account" class="label justify-start">
               <span class="label-text">Account</span>
               <a href="/accounts" class="px-2 fa fa-circle-plus fa-xl text-primary"><span class="sr-only">Add New</span></a> 
@@ -79,7 +79,7 @@
               <% } %>
             </select>
           </div>
-          <div class="form-control col-span-6 md:col-span-4">
+          <div class="form-control col-span-12 sm:col-span-6 md:col-span-4">
             <label for="amount" class="label">
               <span class="label-text">Amount</span>
             </label>
@@ -143,12 +143,10 @@
             <input type="file" class="input input-bordered file:btn file:btn-primary file:h-full file:hover:bg-primary-focus file:mr-4 file:-ml-4 file:px-4 file:rounded-r-none" id="imageUpload" name="file">
           </div>
           <div class="col-span-12 flex justify-center my-4">
-            <button id="update-transaction" class="btn btn-accent" type="submit">Update Transaction</button>            
+            <button id="update-transaction" class="btn btn-accent" type="submit">Update Transaction</button>
+            <a href="/transactions" class="btn btn-outline btn-primary ml-2">Cancel</a>       
           </div>
         </form>
-        <div class="flex justify-center">
-          <input class="btn btn-outline btn-secondary" name="action" onclick="history.back()" type="submit" value="Back"/>
-        </div>
       </section>
     </div>
   </main>  
