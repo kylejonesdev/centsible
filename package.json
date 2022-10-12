@@ -1,7 +1,7 @@
 {
   "name": "centsible",
-  "version": "0.8.0",
-  "description": "Small business accounting",
+  "version": "1.0.0",
+  "description": "Simple small business bookkeeping application.",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",

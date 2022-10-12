@@ -38,7 +38,7 @@
         @apply font-bold
     }
     .main-card {
-        @apply bg-base-100 m-4 p-4 shadow-md rounded-md overflow-x-auto
+        @apply bg-base-100 p-4 mx-1 my-4 rounded-md sm:mx-4 sm:shadow-md overflow-x-auto
     }
     .main-card .label-text {
         @apply text-gray-500 font-bold
