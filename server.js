@@ -8,6 +8,7 @@ const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
 const connectDB = require("./config/database");
+const cors = require("cors");
 const mainRoutes = require("./routes/main");
 const transactionRoutes = require("./routes/transactions");
 const dashboardRoutes = require("./routes/dashboard");
@@ -20,6 +21,14 @@ require("dotenv").config({ path: "./config/.env" });
 // Passport config
 require("./config/passport")(passport);
 
+//CORS Config
+const corsConfig = {
+  origin: 'http://localhost:3000',
+  credentials: true
+}
+
+app.use(cors(corsConfig));
+
 //Connect to database
 connectDB();
 
@@ -30,8 +39,8 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 
 //Body parsing
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //Logging
 app.use(logger("dev"));

@@ -162,7 +162,7 @@ module.exports = {
             }
             //console.log(payeeSorted);
             console.log(accountSorted);
-            res.render("dashboard.ejs", { 
+            res.send({ 
                 payeeSorted: payeeSorted,
                 payeeAllIncome: calculateTotal(payeeSorted, "totalIncome"),
                 payeeAllExpense: calculateTotal(payeeSorted, "totalExpense"),
@@ -174,6 +174,7 @@ module.exports = {
                 filterDateRangeEnd: filterDateRangeEnd,
                 user: req.user 
             });
+            // res.send("Hello world");
         } catch(err) {
             console.error(err);
         }
