@@ -160,8 +160,6 @@ module.exports = {
                   return acc + item[transactionField]
                 }, 0);
             }
-            //console.log(payeeSorted);
-            console.log(accountSorted);
             res.send({ 
                 payeeSorted: payeeSorted,
                 payeeAllIncome: calculateTotal(payeeSorted, "totalIncome"),
@@ -174,7 +172,6 @@ module.exports = {
                 filterDateRangeEnd: filterDateRangeEnd,
                 user: req.user 
             });
-            // res.send("Hello world");
         } catch(err) {
             console.error(err);
         }

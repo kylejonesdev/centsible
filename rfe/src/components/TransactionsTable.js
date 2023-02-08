@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 
 function EntityRow({ id, name, income, expense }) {
+    let total = income - expense
     return (
         <tr>
             <td>
@@ -11,43 +12,50 @@ function EntityRow({ id, name, income, expense }) {
             </td>
             <td className="text-green-500 text-right">${income}</td>
             <td className="text-red-500 text-right">- ${expense}</td>
-            <td className="text-right">${income - expense}</td>
+            <td className="text-right">${total}</td>
         </tr>
     );
 }
 
-export default function TransactionsTable() {
-    
-  useEffect(() => {
-    getDashboard()
-    }, []
-  )
-
-  let [dashboardItems, setDashboardItems] = useState([]);
-    let finalTable = [];
-  const getDashboard =(async () => {
-    let res = await axios.get('/dashboard');
-    //let data = await JSON.stringify(res.data);
-    console.log(res.data);
-    setDashboardItems(res.data.payeeSorted);
-  })
-
-    // let arr = data.payeeSorted;
-    dashboardItems.forEach(line => {
-        console.log(line);
-        finalTable.push(
-           <EntityRow id={line._id} name={line.payee} income={line.totalIncome} expense={line.totalExpense} /> 
-        )
-    })
-
+function TotalRow({ income, expense}) {
+    let total = income - expense;
     return (
-    <table class="table table-compact w-full">
+        <tr>
+        <td className="text-base-content uppercase">Total</td>
+        <td className="text-green-500 text-right">${income}</td>
+        <td className="text-red-500 text-right">- ${expense}</td>
+        <td className="text-base-content text-right">${total}</td>
+        </tr>
+    );
+}
+
+export default function TransactionsTable({ options }) {
+    useEffect(() => {
+        axios.get(options.url)
+            .then((res) => setDashboardItems(res.data))
+    }, [])
+    
+    let [dashboardItems, setDashboardItems] = useState(null);
+    let transactionsTableRows = [];
+    let totalExpense = 0;
+    let totalIncome = 0;
+    if(dashboardItems) {
+        dashboardItems[`${options.objName}Sorted`].forEach(line => {
+            totalIncome += line.totalIncome;
+            totalExpense += line.totalExpense;
+            transactionsTableRows.push(
+               <EntityRow key={line._id} id={line._id} name={line[options.objName]} income={line.totalIncome} expense={line.totalExpense} /> 
+            )
+        })        
+    }
+    return (
+    <table className="table table-compact w-full">
         <thead>
             <tr>
                 <th scope="col">Name</th>
-                <th scope="col" class="text-right">Income</th>
-                <th scope="col" class="text-right">Expense</th>
-                <th scope="col" class="text-right">Net</th>
+                <th scope="col" className="text-right">Income</th>
+                <th scope="col" className="text-right">Expense</th>
+                <th scope="col" className="text-right">Net</th>
             </tr>
         </thead>
         <tbody>
@@ -56,16 +64,11 @@ export default function TransactionsTable() {
                 <p class="text-center">No transactions found.</p>
                 </td>
             </tr> */}
-            {finalTable}
+            {transactionsTableRows}
         </tbody>
-        {/* <tfoot>
-            <tr>
-            <td class="text-base-content uppercase">Total</td>
-            <td class="text-green-500 text-right">$<%= payeeAllIncome %></td>
-            <td class="text-red-500 text-right">- $<%= payeeAllExpense %></td>
-            <td class="text-base-content text-right">$<%= payeeAllIncome - payeeAllExpense %></td>
-            </tr>
-        </tfoot> */}
+        <tfoot>
+            <TotalRow income={totalIncome} expense={totalExpense}/>
+        </tfoot>
     </table>
     );
 }
