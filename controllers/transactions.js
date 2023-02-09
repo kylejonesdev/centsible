@@ -190,7 +190,7 @@ module.exports = {
         createExampleAccounts(req);
       }
       console.log(transactions);
-      res.render("transactions.ejs", {
+      res.send({
         transactions: transactions, 
         totalIncome: calculateTotal(transactions, "income"), 
         totalExpense: calculateTotal(transactions, "expense"), 
@@ -199,7 +199,8 @@ module.exports = {
         filterQuickDate: req.body.filterQuickDate,
         filterDateRangeStart: filterDateRangeStart,
         filterDateRangeEnd: filterDateRangeEnd,
-        user: req.user});
+        user: req.user
+      });
     } catch(err) {
       console.error(err);
     }

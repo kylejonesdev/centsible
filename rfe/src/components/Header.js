@@ -46,9 +46,9 @@ export default function Header() {
                                     <!-- <a href="/reports/dashboard" className="bg-primary-focus text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a> --> */}
                                     <a href="/dashboard" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
 
-                                    {/* <a href="/transactions" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Transactions</a>
+                                    <a href="/transactions" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Transactions</a>
                         
-                                    <a href="/entities" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium">Entities</a>
+                                    {/* <a href="/entities" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium">Entities</a>
                         
                                     <a href="/accounts" className="text-base-300 hover:bg-primary-focus hover:text-base-100 px-3 py-2 rounded-md text-sm font-medium">Accounts</a>                 */}
                                 </div>
