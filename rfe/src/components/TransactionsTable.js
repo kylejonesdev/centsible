@@ -31,8 +31,14 @@ function TotalRow({ income, expense}) {
 
 export default function TransactionsTable({ options }) {
     useEffect(() => {
-        axios.get(options.url)
-            .then((res) => setDashboardItems(res.data))
+        axios.post(
+            options.url,
+            {
+                filterSortBy: options.sortBy,
+                filterSortDirection: options.sortDirection
+            },
+        )
+        .then((res) => setDashboardItems(res.data))
     }, [])
     
     let [dashboardItems, setDashboardItems] = useState(null);
