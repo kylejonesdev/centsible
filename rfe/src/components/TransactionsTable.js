@@ -30,23 +30,11 @@ function TotalRow({ income, expense}) {
 }
 
 export default function TransactionsTable({ options }) {
-    useEffect(() => {
-        axios.post(
-            options.url,
-            {
-                filterSortBy: options.sortBy,
-                filterSortDirection: options.sortDirection
-            },
-        )
-        .then((res) => setDashboardItems(res.data))
-    }, [])
-    
-    let [dashboardItems, setDashboardItems] = useState(null);
     let transactionsTableRows = [];
     let totalExpense = 0;
     let totalIncome = 0;
-    if(dashboardItems) {
-        dashboardItems[`${options.objName}Sorted`].forEach(line => {
+    if(options.data) {
+        options.data[`${options.objName}Sorted`].forEach(line => {
             totalIncome += line.totalIncome;
             totalExpense += line.totalExpense;
             transactionsTableRows.push(

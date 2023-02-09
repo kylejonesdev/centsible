@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import TransactionsTable from "../components/TransactionsTable";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-
-
-function SortForm({ sortBy, onSortByChange, sortDirection, onSortDirectionChange }) {
+function SortForm(
+  { 
+    sortBy,
+    onSortByChange,
+    sortDirection,
+    onSortDirectionChange,
+    startDate,
+    onStartDateChange,
+    endDate,
+    onEndDateChange
+  }) {
 
   const handleFormSubmit = (e) => {
     e.preventDefault()
@@ -14,20 +23,9 @@ function SortForm({ sortBy, onSortByChange, sortDirection, onSortDirectionChange
   }
   return (
     <form 
-    // action="/dashboard"
-    // method="POST"
-    onSubmit={handleFormSubmit}
-    className="flex flex-wrap justify-end gap-x-2 mx-4 sm:mx-0">
-      {/* <!-- <div class="form-control">
-        <label for="filterQuickDate" class="label">
-          <span class="label-text">Quick Date Range</span>
-        </label>
-        <select id="filterQuickDate" name="filterQuickDate" class="select select-ghost select-xs max-w-xs" onchange="this.form.submit()">
-          <option value=""></option>
-          <option value="filterLastYear" >One year ago</option>
-          <option value="filterLast30" >Last 30 days</option>
-        </select>
-      </div> --> */}
+      onSubmit={handleFormSubmit}
+      className="flex flex-wrap justify-end gap-x-2 mx-4 sm:mx-0"
+    >
       <div className="form-control">
         <label htmlFor="filterSortBy" className="label">
           <span className="label-text">Sort By</span>
@@ -41,9 +39,8 @@ function SortForm({ sortBy, onSortByChange, sortDirection, onSortDirectionChange
           >
           <option value=""></option>
           <option value="name">Name</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-          {/* <!-- <option value="net">Net</option> --> */}
+          <option value="totalIncome">Income</option>
+          <option value="totalExpense">Expense</option>
         </select>
       </div>
       <div className="form-control">
@@ -61,18 +58,32 @@ function SortForm({ sortBy, onSortByChange, sortDirection, onSortDirectionChange
           <option value="1">Ascending</option>
         </select>
       </div>
-      {/* <div className="form-control">
+      <div className="form-control">
         <label htmlFor="filterDateRangeStart" className="label">
           <span className="label-text">Start Date</span>
         </label>
-        <input id="filterDateRangeStart" type="date" className="input input-ghost input-xs" name="filterDateRangeStart" value="<%= filterDateRangeStart %>" />
+        <input
+          id="filterDateRangeStart"
+          type="date"
+          className="input input-ghost input-xs"
+          name="filterDateRangeStart"
+          value={startDate}
+          onChange={(e) => onStartDateChange(e.target.value)}
+        />
       </div>
       <div className="form-control">
         <label htmlFor="filterDateRangeEnd" className="label">
           <span className="label-text">End Date</span>
         </label>
-        <input id="filterDateRangeEnd" type="date" className="input input-ghost input-xs" name="filterDateRangeEnd"  value="<%= filterDateRangeEnd %>" />
-      </div> */}
+        <input
+          id="filterDateRangeEnd"
+          type="date"
+          className="input input-ghost input-xs"
+          name="filterDateRangeEnd"
+          value={endDate}
+          onChange={(e) => onEndDateChange(e.target.value)}
+        />
+      </div>
       <button className="btn btn-accent btn-sm self-center" type="submit">Apply</button>
       <a href="/dashboard" className="btn btn-outline btn-primary btn-sm self-center">Clear</a>
     </form>
@@ -83,30 +94,27 @@ export default function Dashboard() {
 
   let [sortBy, setSortBy] = useState("");
   let [sortDirection, setSortDirection] = useState("");
-  // let [startDate, setStartDate] = useState("");
-  // let [endDate, setEndDate] = useState("");
+  let [dashboardItems, setDashboardItems] = useState(null);
+  let [startDate, setStartDate] = useState("");
+  let [endDate, setEndDate] = useState("");
+
+  useEffect(() => {
+    axios.post(
+      '/dashboard',
+      {
+          filterSortBy: sortBy,
+          filterSortDirection: sortDirection,
+          filterDateRangeStart: startDate,
+          filterDateRangeEnd: endDate
+      },
+    )
+    .then((res) => setDashboardItems(res.data))
+  }, [sortBy, sortDirection, startDate, endDate])
 
   return (
     <>
       <Header />
       <main className="sm:container mx-auto">
-        {/* <div class="main-card">
-          <header>
-            <h1 class="page-title">Dashboard</h1>
-            <h2 class="table-title">Quick Navigation</h2>
-          </header>
-          <section class="flex flex-wrap gap-4 justify-between">
-            <div class="">
-              <a href="/transactions" class="btn btn-accent">Add Transaction</a>
-            </div>
-            <div class="">
-              <a href="/entities" class="btn btn-accent">Add Entity</a>
-            </div>
-            <div class="">
-              <a href="/accounts" class="btn btn-accent">Add Account</a>
-            </div>
-          </section>
-        </div> */}
         <div className="filter-row">
           <header className="self-center">
             <h1 className="filter-row-title">Dashboard</h1>
@@ -117,6 +125,10 @@ export default function Dashboard() {
             onSortByChange={setSortBy}
             sortDirection={sortDirection}
             onSortDirectionChange={setSortDirection}
+            startDate={startDate}
+            onStartDateChange={setStartDate}
+            endDate={endDate}
+            onEndDateChange={setEndDate}
             />
           </section>
         </div>
@@ -129,10 +141,8 @@ export default function Dashboard() {
               <TransactionsTable
                 options={
                   {
-                    url: "/dashboard", 
-                    objName: "payee", 
-                    sortBy: sortBy, 
-                    sortDirection: sortDirection
+                    data: dashboardItems, 
+                    objName: "payee",
                   }
                 }
               />              
@@ -143,7 +153,14 @@ export default function Dashboard() {
               <h2 className="table-title">Transactions by Account</h2>
             </header>
             <section className="overflow-x-auto">
-              <TransactionsTable options={{url: "/dashboard", objName: "account"}} />
+              <TransactionsTable
+                options={
+                  {
+                    data: dashboardItems, 
+                    objName: "account"
+                  }
+                }
+              />
             </section>
           </div>
         </div>
