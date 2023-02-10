@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Header />
+      <Header navVisible={true} />
       <main className="sm:container mx-auto">
         <div className="filter-row">
           <header className="self-center">

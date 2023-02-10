@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import App from './App';
+import './css/output.css';
+import Landing from './routes/landing.js';
 import Login from './routes/login.js';
 import Dashboard from './routes/dashboard.js';
 import Transactions from './routes/transactions.js';
@@ -14,10 +15,11 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path='/'>
-          <Route index element={<App />} />
+          <Route index element={<Landing />} />
           <Route path='/login' element={<Login />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/transactions' element={<Transactions />} />
+          <Route path='/logout' element={<Landing />} />
         </Route>
       </Routes>
     </BrowserRouter>

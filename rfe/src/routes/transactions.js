@@ -262,7 +262,7 @@ export default function Transactions() {
 
   return (
     <>
-      <Header />
+      <Header navVisible={true} />
       <main className="sm:container mx-auto">
         <header>
           <h1 className="page-title">Transactions</h1>
