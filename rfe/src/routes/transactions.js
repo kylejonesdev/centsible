@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SortForm from '../components/SortForm';
@@ -170,11 +172,11 @@ function LineItem({ line }) {
         <td className="text-red-500 text-right">- ${line.expense}</td>
       }
       <td className="border-b-0 text-right">
-        <a href={`/transactions/${line._id}`}>
+        {/* <a href={`/transactions/${line._id}`}>
           <button className="btn btn-outline btn-primary btn-xs fa-solid fa-ellipsis" value="transaction-details"><span className="sr-only">Details</span></button>
-        </a>
+        </a> */}
         <form action={`/transactions/delete/${line._id}?_method=DELETE`} method="POST" className="inline">
-          <button className="btn btn-error btn-xs fa fa-trash" type="submit" value="delete-transaction"><span className="sr-only">Delete</span></button>
+          <button className="btn btn-error btn-xs fa fa-trash" type="submit" value="delete-transaction"><span className="sr-only">Delete</span><FontAwesomeIcon icon={faTrash} /></button>
         </form>
       </td>
     </tr>
@@ -208,7 +210,7 @@ function TransactionsTable({ transactions }) {
                   <th scope="col">Payee</th>
                   <th scope="col">Account</th>
                   <th scope="col" className="text-right">Amount</th>
-                  <th scope="col" className="text-right">Info/Delete</th>
+                  <th scope="col" className="text-right">Delete</th>
               </tr>
           </thead>
           <tbody>
