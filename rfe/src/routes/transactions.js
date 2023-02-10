@@ -184,7 +184,6 @@ function LineItem({ line }) {
 }
 
 function TransactionsTable({ transactions }) {
-  let readable = JSON.stringify(transactions);
   let lineItems = [];
   let transactionsTotal = 0;
   if(transactions) {
@@ -270,26 +269,28 @@ export default function Transactions() {
           <h1 className="page-title">Transactions</h1>
         </header>
         <AddATransaction transactions={transactions} />
-        <SortForm
-            sortBy={sortBy}
-            onSortByChange={setSortBy}
-            sortDirection={sortDirection}
-            onSortDirectionChange={setSortDirection}
-            startDate={startDate}
-            onStartDateChange={setStartDate}
-            endDate={endDate}
-            onEndDateChange={setEndDate}
-            choices={
-              [
-                {value: "date", text: "Date"},
-                {value: "payee", text: "Payee"},
-                {value: "account", text: "Account"},
-                {value: "income", text: "Income"},
-                {value: "expense", text: "Expense"}
-              ]
-            }
-            clearUrl={'/transactions'}
-        />
+        <section className="w-auto self-center">
+          <SortForm
+              sortBy={sortBy}
+              onSortByChange={setSortBy}
+              sortDirection={sortDirection}
+              onSortDirectionChange={setSortDirection}
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              choices={
+                [
+                  {value: "date", text: "Date"},
+                  {value: "payee", text: "Payee"},
+                  {value: "account", text: "Account"},
+                  {value: "income", text: "Income"},
+                  {value: "expense", text: "Expense"}
+                ]
+              }
+              clearUrl={'/transactions'}
+          />
+        </section>
         <TransactionsTable transactions={transactions} />
       </main>
       <Footer />

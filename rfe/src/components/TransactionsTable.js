@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import axios from 'axios';
-
 function EntityRow({ id, name, income, expense }) {
     let total = income - expense
     return (
